@@ -1,0 +1,17 @@
+-my function that plots all of the different mass particles in a Xx3 grid using the yt plotting interface
+--found in graphs rockstar
+--needs to be updated to use newer functions
+
+-my function for plotting all of the different mass particles in different colors on the same plot
+--found in graphs rockstar
+--mostly done I think
+
+-my 3x2 grid generator
+
+-update my 3-d graph to work with a baserockstar_ascii input directory
+--in graphs rockstar and Mass-Distance Comparison
+
+-add my script in mass-distance comparison that makes the Xx3 grid of histograms and scatterplot
+--not much to do here
+
+-add to my github
