@@ -105,6 +105,7 @@ def rockstar_catalog_reader(input_dir, add_all=False, subhalos=False, halo_mass=
                 for lines in num_p_list:
                     if str(int(ids)) == lines[0]:
                         num_p_list_sort.append(lines)
+                        
         if mvir_sort != []:
             if len(mvir_sort) <= halo_number:
                 mvir_ids = [mvir_sort[y][0] for y in range(len(mvir_sort))]
@@ -121,7 +122,7 @@ def rockstar_catalog_reader(input_dir, add_all=False, subhalos=False, halo_mass=
         
         if rvir_sort != []:
             if len(rvir_sort) <= halo_number:
-                rvir_ids = [rvir_sort[y][0] for y in range(len(rivr_sort))]
+                rvir_ids = [rvir_sort[y][0] for y in range(len(rvir_sort))]
             else:
                 rvir_ids = [rvir_sort[y][0] for y in range(halo_number)]
             

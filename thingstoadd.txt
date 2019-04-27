@@ -6,12 +6,15 @@
 --found in graphs rockstar
 --mostly done I think
 
--my 3x2 grid generator
+-my VELAsnapnumber3x2.png grid generator
 
 -update my 3-d graph to work with a baserockstar_ascii input directory
 --in graphs rockstar and Mass-Distance Comparison
 
--add my script in mass-distance comparison that makes the Xx3 grid of histograms and scatterplot
---not much to do here
+-test massdistancecomparison.py
 
--add to my github
+-test my new arttoascii.py file with parser
+
+-add more elements to ascii file of the finding stars program?
+
+-add -h for all of my parse arguments
