@@ -4,7 +4,6 @@ import matplotlib.pyplot as plt
 from satellite_analysis import rockstarcatalogreader
 
 
-
 def parse():
     parser = argparse.ArgumentParser(formatter_class=argparse.ArgumentDefaultsHelpFormatter)
     parser.add_argument('input_dir')
@@ -70,4 +69,5 @@ for position in scale_indexes:
     n, bins, patches = plt.hist(distances, 50, facecolor='tab:orange', alpha=0.75)
     count = count + 1
 
-plt.savefig('%s/mass&distancecomparison.jpg' % input_dir)
+plt.savefig('%s/mass&distancecomparison.jpg' % input_dir)  
+    

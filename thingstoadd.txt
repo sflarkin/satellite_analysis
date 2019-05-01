@@ -15,6 +15,7 @@
 
 -test my new arttoascii.py file with parser
 
+-finish the finding stars program
 -add more elements to ascii file of the finding stars program?
 
 -add -h for all of my parse arguments
