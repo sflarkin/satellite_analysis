@@ -1,7 +1,7 @@
 import numpy as np
 import argparse
 import matplotlib.pyplot as plt
-from satellite_analysis import rockstarcatalogreader
+from satellite_analysis.catalogreaders import rockstarcatalogreader as rockstar
 
 
 def parse():
@@ -13,20 +13,20 @@ def parse():
 args = parse()
 input_dir = args['input_dir']
 
-rockstarcatalogreader.rockstar_catalog_reader(input_dir)
+rockstar.rockstar_catalog_reader(input_dir)
 
 wanted_a = ['170', '200', '250', '330', '400', '500'] #needs to be *1000 since the rockstar_files are like that
-scale_indexes = [pos for pos, char in enumerate(rockstarcatalogreader.rockstar_file_index) if char in wanted_a]
+scale_indexes = [pos for pos, char in enumerate(rockstar.rockstar_file_index) if char in wanted_a]
 plt.figure(figsize=(20,30))
 count = 1
 for position in scale_indexes:
     
-    largest_halo = rockstarcatalogreader.halo_data_largest[position][1][0]
-    z = ((1/(float(rockstarcatalogreader.rockstar_file_index[position])/1000)) - 1 )
+    largest_halo = rockstar.halo_data_largest[position][1][0]
+    z = ((1/(float(rockstar.rockstar_file_index[position])/1000)) - 1 )
     z_str = str(z)
     distances = []
     masses = []
-    for halo in rockstarcatalogreader.halo_data_all[position]:
+    for halo in rockstar.halo_data_all[position]:
         x = (float(largest_halo[8]) - float(halo[8]))
         y = (float(largest_halo[9]) - float(halo[9]))
         z = (float(largest_halo[10]) - float(halo[10]))

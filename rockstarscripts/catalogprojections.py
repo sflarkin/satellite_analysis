@@ -7,8 +7,8 @@ import random
 import argparse
 import matplotlib.pyplot as plt
 plt.switch_backend('agg')
-from satellite_analysis import rockstarcatalogreader as reader 
-from satellite_analysis import readtomer as tomer
+from satellite_analysis.catalogreaders import rockstarcatalogreader as rockstar 
+from satellite_analysis.catalogreaders import tomercatalogreader as tomer
 
 def parse():
     parser = argparse.ArgumentParser(formatter_class=argparse.ArgumentDefaultsHelpFormatter)
@@ -25,7 +25,7 @@ VELA_dir = args['VELA_dir']
 VELA_number = args['VELA_number']
 
 #load in the rockstar catatalog halo data
-reader.rockstar_catalog_reader(input_dir)
+rockstar.rockstar_catalog_reader(input_dir)
 
 #find the VELA snapshots
 VELA_snaps = glob.glob(VELA_dir + '10MpcBox*')
@@ -44,8 +44,8 @@ x_tomer = tomer.tomer_list['center[0](code)'].tolist()
 y_tomer = tomer.tomer_list['center[1](code)'].tolist()
 z_tomer = tomer.tomer_list['center[2](code)'].tolist()
 
-for index in reader.snapshot_index:
-    VELA_a = reader.rockstar_file_index[index]
+for index in rockstar.snapshot_index:
+    VELA_a = rockstar.rockstar_file_index[index]
     print('Generating Graph Grid for snapshot:', VELA_a)
     position = [pos for pos, loc in enumerate(VELA_index) if loc == VELA_a]
     if position == [] or len(position) > 1:
@@ -87,9 +87,9 @@ for index in reader.snapshot_index:
 
         #now add the circles for the largest rockstar halos
         #this is the data of the 20 largest halos
-        mvir_list_sorted = reader.halo_data_largest[index][1]
+        mvir_list_sorted = rockstar.halo_data_largest[index][1]
         #this is the data for all of the halos
-        mvir_list_all = reader.halo_data_all[index]
+        mvir_list_all = rockstar.halo_data_all[index]
         x1, x2 = [], []
         y1, y2 = [], []
         z1, z2 = [], []
