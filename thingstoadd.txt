@@ -6,16 +6,24 @@
 --found in graphs rockstar
 --mostly done I think
 
--my VELAsnapnumber3x2.png grid generator
-
 -update my 3-d graph to work with a baserockstar_ascii input directory
 --in graphs rockstar and Mass-Distance Comparison
 
--test massdistancecomparison.py
+-massanddistancecomparison.py currently works for non-sub halos
+--does this need to be updated
 
 -test my new arttoascii.py file with parser
 
 -finish the finding stars program
 -add more elements to ascii file of the finding stars program?
 
+-convert programs to work with my new consistent reader
+--catalogprojections.py
+--massdistancecomparison.py
+
+
 -add -h for all of my parse arguments
+
+-I made a symbolic directory that points from my anaconda package folder to satellite_analysis
+--find folder by using import yt yt.__file__
+--will need to make it so that installing with pip or another method works in the future when I am ready to share this

@@ -7,7 +7,6 @@ from satellite_analysis import rockstarcatalogreader
 def parse():
     parser = argparse.ArgumentParser(formatter_class=argparse.ArgumentDefaultsHelpFormatter)
     parser.add_argument('input_dir')
-    parser.add_argument('out_file')
     args = vars(parser.parse_args())
     return args
 
@@ -22,7 +21,7 @@ plt.figure(figsize=(20,30))
 count = 1
 for position in scale_indexes:
     
-    largest_halo = rockstarcatalgoreader.halo_data_num_p_mvir[position][1][0]
+    largest_halo = rockstarcatalogreader.halo_data_largest[position][1][0]
     z = ((1/(float(rockstarcatalogreader.rockstar_file_index[position])/1000)) - 1 )
     z_str = str(z)
     distances = []

@@ -1,6 +1,4 @@
 #this is for the snapnumber3x2
-import sys
-sys.path.append('/Users/user1/documents/rockstar_analysis')
 
 import yt
 import glob
