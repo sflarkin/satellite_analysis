@@ -1,7 +1,7 @@
 import numpy as np
 import argparse
 import matplotlib.pyplot as plt
-from satellite_analysis.catalogreaders import rockstarcatalogreader as rockstar
+from satellite_analysis.catalogreaders import consistentcatalogreader as consistent
 
 
 def parse():
@@ -13,24 +13,24 @@ def parse():
 args = parse()
 input_dir = args['input_dir']
 
-rockstar.rockstar_catalog_reader(input_dir, subhalos=True)
+consistent.consistent_catalog_reader(input_dir, subhalos=True)
 
 wanted_a = ['170', '200', '250', '330', '400', '500'] #needs to be *1000 since the rockstar_files are like that
-scale_indexes = [pos for pos, char in enumerate(rockstar.rockstar_file_index) if char in wanted_a]
+scale_indexes = [pos for pos, char in enumerate(consistent.consistent_file_index) if char in wanted_a]
 plt.figure(figsize=(20,30))
 count = 1
 for position in scale_indexes:
     
-    largest_halo = rockstar.halo_data_largest[position][1][0]
-    z = ((1/(float(rockstar.rockstar_file_index[position])/1000)) - 1 )
+    largest_halo = consistent.halo_data_largest[position][0][0]
+    z = ((1/(float(consistent.consistent_file_index[position])/1000)) - 1 )
     z_str = str(z)
     distances = []
     masses = []
-    for halo in rockstar.halo_data_all[position]:
-        x = (float(largest_halo[8]) - float(halo[8]))
-        y = (float(largest_halo[9]) - float(halo[9]))
-        z = (float(largest_halo[10]) - float(halo[10]))
-        mass = float(halo[2])
+    for halo in consistent.halo_data_all[position]:
+        x = (float(largest_halo[17]) - float(halo[17]))
+        y = (float(largest_halo[18]) - float(halo[17]))
+        z = (float(largest_halo[19]) - float(halo[19]))
+        mass = float(halo[10])
         distances.append(((x**2 + y**2 + z**2)**(1/2)))
         masses.append(mass)
     masses_sort = sorted(masses)
@@ -68,5 +68,5 @@ for position in scale_indexes:
     n, bins, patches = plt.hist(distances, 50, facecolor='tab:orange', alpha=0.75)
     count = count + 1
 
-plt.savefig('%s/mass&distancecomparison.jpg' % input_dir)  
+plt.savefig('%s/consistentmass&distancecomparison.jpg' % input_dir)  
     

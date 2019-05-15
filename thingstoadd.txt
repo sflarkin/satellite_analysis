@@ -1,6 +1,4 @@
--my function that plots all of the different mass particles in a Xx3 grid using the yt plotting interface
---found in graphs rockstar
---needs to be updated to use newer functions
+-darkmattercomparison.py fix so it zooms in on center of the central object?
 
 -my function for plotting all of the different mass particles in different colors on the same plot
 --found in graphs rockstar
@@ -9,20 +7,20 @@
 -update my 3-d graph to work with a baserockstar_ascii input directory
 --in graphs rockstar and Mass-Distance Comparison
 
--massanddistancecomparison.py currently works for non-sub halos
---does this need to be updated
-
--test my new arttoascii.py file with parser
-
--finish the finding stars program
 -add more elements to ascii file of the finding stars program?
 
--convert programs to work with my new consistent reader
---catalogprojections.py
---massdistancecomparison.py
-
+-the subhalos=True call for both my readers is prob broken when set in parser
 
 -add -h for all of my parse arguments
+
+-why does smallestgrid.py work on this pc but not pleiades?
+--looks like this wont be needed
+
+
+
+-should I rework the sorted part of the catalog readers to just do Mvir?
+
+
 
 -I made a symbolic directory that points from my anaconda package folder to satellite_analysis
 --find folder by using import yt yt.__file__

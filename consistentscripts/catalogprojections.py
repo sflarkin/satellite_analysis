@@ -7,7 +7,7 @@ import random
 import argparse
 import matplotlib.pyplot as plt
 plt.switch_backend('agg')
-from satellite_analysis.catalogreaders import rockstarcatalogreader as rockstar 
+from satellite_analysis.catalogreaders import consistentcatalogreader as consistent 
 from satellite_analysis.catalogreaders import tomercatalogreader as tomer
 
 def parse():
@@ -25,7 +25,7 @@ VELA_dir = args['VELA_dir']
 VELA_number = args['VELA_number']
 
 #load in the rockstar catatalog halo data
-rockstar.rockstar_catalog_reader(input_dir, subhalos='False')
+consistent.consistent_catalog_reader(input_dir)
 
 #find the VELA snapshots
 VELA_snaps = glob.glob(VELA_dir + '/10MpcBox*')
@@ -44,8 +44,8 @@ x_tomer = tomer.tomer_list['center[0](code)'].tolist()
 y_tomer = tomer.tomer_list['center[1](code)'].tolist()
 z_tomer = tomer.tomer_list['center[2](code)'].tolist()
 
-for index in rockstar.snapshot_index:
-    VELA_a = rockstar.rockstar_file_index[index]
+for index in consistent.snapshot_index:
+    VELA_a = consistent.consistent_file_index[index]
     print('Generating Graph Grid for snapshot:', VELA_a)
     position = [pos for pos, loc in enumerate(VELA_index) if loc == VELA_a]
     if position == [] or len(position) > 1:
@@ -86,29 +86,29 @@ for index in rockstar.snapshot_index:
             rt = r_vir_tomer[tomer_number[0]]
 
         #now add the circles for the largest rockstar halos
-        #this is the data of the 20 largest halos
-        mvir_list_sorted = rockstar.halo_data_largest[index][1]
+        #this is the data of the X largest halos found by the catalog reader
+        mvir_list_sorted = consistent.halo_data_largest[index][0]
         #this is the data for all of the halos
-        mvir_list_all = rockstar.halo_data_all[index]
+        mvir_list_all = consistent.halo_data_all[index]
         x1, x2 = [], []
         y1, y2 = [], []
         z1, z2 = [], []
         r1, r2 = [], []
 
         for halo0 in mvir_list_sorted:
-            x1.append(float(halo0[8])/domain_width)
-            y1.append(float(halo0[9])/domain_width)
-            z1.append(float(halo0[10])/domain_width)
-            r1.append(float(halo0[4]))
+            x1.append(float(halo0[17])/domain_width)
+            y1.append(float(halo0[18])/domain_width)
+            z1.append(float(halo0[19])/domain_width)
+            r1.append(float(halo0[11]))
     
         for halo1 in mvir_list_all:
-            x2.append(float(halo1[8])/domain_width)
-            y2.append(float(halo1[9])/domain_width)
-            z2.append(float(halo1[10])/domain_width)
-            r2.append(float(halo1[4]))
+            x2.append(float(halo1[17])/domain_width)
+            y2.append(float(halo1[18])/domain_width)
+            z2.append(float(halo1[19])/domain_width)
+            r2.append(float(halo1[11]))
     
         print("Successfully generated particle and halo data for snapshot", VELA_a)
-        title = str(VELA_a) +'rockstar2x3.png'
+        title = str(VELA_a) +'consistentsubhalos2x3.png'
     
         plt.figure(figsize=(30,20))
         
@@ -116,17 +116,17 @@ for index in rockstar.snapshot_index:
         plt.xlabel('X')
         plt.ylabel('Y')
         plt.scatter(x0, y0, marker='.', s = .1)    
-        plt.scatter(x1, y1, s=r1, facecolor='none',edgecolor='tab:orange')
+        plt.scatter(x1, y1, s=r1, facecolor='none',edgecolor='b')
         if tomer_check == True:
             plt.scatter(xt, yto, s=rt, facecolor='none', edgecolor='r')
         plt.title('20 Largest Halos XY Projection')
-        plt.legend(('dm0', 'Rockstar Catalog', 'Tomer Center'), markerscale=1)
+        plt.legend(('dm0', 'Consistent Catalog', 'Tomer Center'), markerscale=1)
         
         plt.subplot('234')
         plt.xlabel('X')
         plt.ylabel('Y')
         plt.scatter(x0, y0, marker='.', s = .1)    
-        plt.scatter(x2, y2, s=r2, facecolor='none',edgecolor='tab:orange')
+        plt.scatter(x2, y2, s=r2, facecolor='none',edgecolor='b')
         plt.title('All Halos XY Projection')
         if tomer_check == True:
             plt.scatter(xt, yto, s=rt, facecolor='none', edgecolor='r')
@@ -136,7 +136,7 @@ for index in rockstar.snapshot_index:
         plt.xlabel('Y')
         plt.ylabel('Z')
         plt.scatter(y0, z0, marker='.', s = .1)    
-        plt.scatter(y1, z1, s=r1, facecolor='none',edgecolor='tab:orange')
+        plt.scatter(y1, z1, s=r1, facecolor='none',edgecolor='b')
         plt.title('20 Largest Halos YZ Projection')
         if tomer_check == True:
             plt.scatter(yto, zt, s=rt, facecolor='none', edgecolor='r')
@@ -145,7 +145,7 @@ for index in rockstar.snapshot_index:
         plt.xlabel('Y')
         plt.ylabel('Z')
         plt.scatter(y0, z0, marker='.', s = .1)    
-        plt.scatter(y2, z2, s=r2, facecolor='none',edgecolor='tab:orange')
+        plt.scatter(y2, z2, s=r2, facecolor='none',edgecolor='b')
         plt.title('All Halos YZ Projection')
         if tomer_check == True:
             plt.scatter(yto, zt, s=rt, facecolor='none', edgecolor='r')
@@ -155,7 +155,7 @@ for index in rockstar.snapshot_index:
         plt.xlabel('Z')
         plt.ylabel('X')
         plt.scatter(z0, x0, marker='.', s = .1)    
-        plt.scatter(z1, x1, s=r1, facecolor='none',edgecolor='tab:orange')
+        plt.scatter(z1, x1, s=r1, facecolor='none',edgecolor='b')
         plt.title('20 Largest Halos ZX Projection')
         if tomer_check == True:
             plt.scatter(zt, xt, s=rt, facecolor='none', edgecolor='r')
@@ -164,7 +164,7 @@ for index in rockstar.snapshot_index:
         plt.xlabel('z')
         plt.ylabel('x')
         plt.scatter(z0, x0, marker='.', s = .1)    
-        plt.scatter(z2, x2, s=r2, facecolor='none',edgecolor='tab:orange')
+        plt.scatter(z2, x2, s=r2, facecolor='none',edgecolor='b')
         plt.title('All Halos ZX Projection')
         if tomer_check == True:
             plt.scatter(zt, xt, s=rt, facecolor='none', edgecolor='r')

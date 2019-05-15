@@ -2,10 +2,10 @@ import glob
 import numpy as np
 from operator import itemgetter
 
-def rockstar_catalog_reader(input_dir, add_all=False, subhalos=False, halo_mass=1e+08, halo_number=20):
+def rockstar_catalog_reader(input_dir, add_all=False, subhalos='False', halo_mass=1e+08, halo_number=20):
     global halo_data_largest, halo_data_all, snapshot_index, rockstar_file_index, rockstar_index
     
-    all_files = glob.glob(input_dir + '*.ascii')
+    all_files = glob.glob(input_dir + '/*.ascii')
     rockstar_file_index_list = []
     for file in all_files:
         underscore = [pos for pos, char in enumerate(file) if char == '_']
@@ -38,7 +38,7 @@ def rockstar_catalog_reader(input_dir, add_all=False, subhalos=False, halo_mass=
     
         #print('')
         #print('Collecting Halo Data for snapshot index', index)
-        glob_files = glob.glob(input_dir + '*halos_' + rockstar_file_index[index] + '.*.ascii')
+        glob_files = glob.glob(input_dir + '/*halos_' + rockstar_file_index[index] + '.*.ascii')
 
         #call the empty list from the halo_data_lists that we want to add to
     
@@ -66,9 +66,9 @@ def rockstar_catalog_reader(input_dir, add_all=False, subhalos=False, halo_mass=
                 if add_all == False:
                     for lists in catalog:
                         if float(lists[2]) >= halo_mass:
-                            if subhalos == False:
+                            if subhalos == 'False':
                                 above_halo_mass.append(lists)
-                            if subhalos == True:
+                            if subhalos == 'True':
                                 if float(lists[-1]) == -1:
                                     above_halo_mass.append(lists)
                     halo_list = halo_list + above_halo_mass

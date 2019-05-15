@@ -2,10 +2,10 @@ import glob
 import numpy as np
 from operator import itemgetter
 
-def consistent_catalog_reader(input_dir, add_all=False, subhalos=False, halo_mass=1e+08, halo_number=20):
+def consistent_catalog_reader(input_dir, add_all=False, subhalos='False', halo_mass=1e+08, halo_number=20):
     global halo_data_largest, halo_data_all, snapshot_index, consistent_file_index, consistent_index
     
-    all_files = glob.glob(input_dir + '*.list')
+    all_files = glob.glob(input_dir + '/*.list')
     consistent_file_index_list = []
     for file in all_files:
         period = [pos for pos, char in enumerate(file) if char == '.']
@@ -35,9 +35,9 @@ def consistent_catalog_reader(input_dir, add_all=False, subhalos=False, halo_mas
     
     for index in snapshot_index:
     
-        print('')
-        print('Collecting Halo Data for snapshot index', index)
-        glob_files = glob.glob(input_dir + '*hlist_0.' + consistent_file_index[index] + '*.list')
+        #print('')
+        #print('Collecting Halo Data for snapshot index', index)
+        glob_files = glob.glob(input_dir + '/*hlist_0.' + consistent_file_index[index] + '*.list')
 
         #call the empty list from the halo_data_lists that we want to add to
     
@@ -65,9 +65,9 @@ def consistent_catalog_reader(input_dir, add_all=False, subhalos=False, halo_mas
                 if add_all == False:
                     for lists in catalog:
                         if float(lists[10]) >= halo_mass:
-                            if subhalos == False:
+                            if subhalos == 'False':
                                 above_halo_mass.append(lists)
-                            if subhalos == True:
+                            if subhalos == 'True':
                                 if float(lists[5]) == -1:
                                     above_halo_mass.append(lists)
                     halo_list = halo_list + above_halo_mass
@@ -97,11 +97,11 @@ def consistent_catalog_reader(input_dir, add_all=False, subhalos=False, halo_mas
                 mvir_ids = [mvir_sort[y][0] for y in range(halo_number)]
             
             for lines in halo_data_all[index]:
-                if float(lines[0]) in mvir_ids:
+                if float(lines[1]) in mvir_ids:
                     mvir_list.append(lines)
             for ids in mvir_ids:
                 for lines in mvir_list:
-                    if str(int(ids)) == lines[0]:
+                    if str(int(ids)) == lines[1]:
                         mvir_list_sort.append(lines)
         
         if rvir_sort != []:
@@ -111,11 +111,11 @@ def consistent_catalog_reader(input_dir, add_all=False, subhalos=False, halo_mas
                 rvir_ids = [rvir_sort[y][0] for y in range(halo_number)]
             
             for lines in halo_data_all[index]:
-                if float(lines[0]) in rvir_ids:
+                if float(lines[1]) in rvir_ids:
                     rvir_list.append(lines)
             for ids in rvir_ids:
                 for lines in rvir_list:
-                    if str(int(ids)) == lines[0]:
+                    if str(int(ids)) == lines[1]:
                         rvir_list_sort.append(lines)
                         
         #now we get the halo data from these largest halos ids and add the info to halo_data_num_p_mvir

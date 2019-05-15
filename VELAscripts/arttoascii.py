@@ -14,7 +14,7 @@ def parse():
 args = parse()
 
 VELA_dir = args['VELA_dir']
-all_files = glob.glob(input_dir + '/10Mpc*')
+all_files = glob.glob(VELA_dir + '/10Mpc*')
 completed = glob.glob('*.ascii')
 print('Files already converted:', completed)
 digits_list = []
@@ -23,7 +23,7 @@ for file in all_files:
     #extract the snapshot number for use
     digits = file[-5:-2]
     digits_list.append(str(digits))
-    file_name = str(digits) + '.ascii'
+    file_name = VELA_dir + '/' + str(digits) + '.ascii'
     print(file_name)
     if file_name not in completed:
 
@@ -64,7 +64,7 @@ for file in all_files:
 
 digits_list.sort()
 
-f = open('snapshot_names.txt', 'w')
+f = open('%s/snapshot_names.txt' % VELA_dir, 'w')
 for item in digits_list:
     f.write("%s\n" % item)
 f.close()
