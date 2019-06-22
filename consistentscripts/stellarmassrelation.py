@@ -18,8 +18,8 @@ def parse():
     parser.add_argument('input_dir')
     parser.add_argument('VELA_dir')
     parser.add_argument('out_dir')
-    parser.add_argument('--gen_xyz', nargs='?', default=False)
-    parser.add_argument('--subhalos', nargs='?', default=True)
+    parser.add_argument('--gen_xyz', nargs='?', default='False')
+    parser.add_argument('--subhalos', nargs='?', default='True')
     args = vars(parser.parse_args())
     return args
 
@@ -47,7 +47,7 @@ if not os.path.exists(out_dir):
 #Now run the rockstarcatalogreader to get the halo location data.
 
 #input_dir = '/Users/user1/Documents/VELA07/baserockstar_ascii/subhalos/'
-consistent.consistent_catalog_reader(input_dir, subhalos=subhalos)
+consistent.consistent_catalog_reader(input_dir, subhalos=subhalos, halo_number=1)
 
 #Collect the names of the VELA simulations in the VELA_dir so that star data can be extracted.
 VELA_snaps = glob.glob(VELA_dir + '/10MpcBox*')
@@ -74,8 +74,11 @@ for index in consistent.snapshot_index:
         
         #Create the lists to hold the halo data untill they are written to an ascii file.
         Id_list = []
+        pid_list = []
+        mvir_list = []
+        mpeak_list = []
         stellar_mass_list = []
-        darkmatter_mass_list = []
+        darkmatter_mass_yt_list = []
         mass_ratio_list = []
         
         #create the list of halo_ids of the largest halos to plot if desired
@@ -94,13 +97,19 @@ for index in consistent.snapshot_index:
             Id = halo[1]
             center = [x, y, z]
             sp = ds.sphere(center, (rvir, 'kpc/h'))
-            stellar_mass, darkmatter_mass = sp.quantities.total_quantity([('stars', 'particle_mass'),\
+            stellar_mass, darkmatter_mass_yt = sp.quantities.total_quantity([('stars', 'particle_mass'),\
                                                                           ('darkmatter', 'particle_mass')])
-            
+            #get the Mpeak, Mvir, and pid if its a satellite or not
+            pid = halo[5]
+            mvir = halo[10]
+            mpeak = halo[61]
             #Add the halo values to the lists to be written to an ascii file.
             Id_list.append(Id)
+            pid_list.append(pid)
+            mvir_list.append(mvir)
+            mpeak_list.append(mpeak)
             stellar_mass_list.append(stellar_mass.in_units('Msun/h'))
-            darkmatter_mass_list.append(darkmatter_mass.in_units('Msun/h'))
+            darkmatter_mass_yt_list.append(darkmatter_mass.in_units('Msun/h'))
             mass_ratio_list.append(stellar_mass/darkmatter_mass)
             
             #Now make the xyz graphs if wanted.
@@ -111,7 +120,7 @@ for index in consistent.snapshot_index:
     
         #Now write the halo mass information to an ascii file
         file_name = '%s/halomass%s.ascii' % (out_dir, VELA_a)
-        data = Table([Id_list, stellar_mass_list, darkmatter_mass_list, mass_ratio_list],\
-                     names=['Id', 'stellar_mass', 'darkmatter_mass', 'mass_ratio'])
+        data = Table([Id_list, pid_list, mvir_list, mpeak_list, stellar_mass_list, darkmatter_mass_yt_list, mass_ratio_list],\
+                     names=['Id[1]', 'Pid[5]', 'Mvir[11]', 'Mpeak[61]' 'stellar_mass', 'darkmatter_mass_yt', 'mass_ratio'])
         ascii.write(data, output=file_name, overwrite=True)
             
