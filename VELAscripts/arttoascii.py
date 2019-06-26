@@ -8,12 +8,14 @@ import glob
 def parse():
     parser = argparse.ArgumentParser(formatter_class=argparse.ArgumentDefaultsHelpFormatter)
     parser.add_argument('VELA_dir')
+    parser.add_argument('out_dir')
     args = vars(parser.parse_args())
     return args
 
 args = parse()
 
 VELA_dir = args['VELA_dir']
+out_dir = args['out_dir']
 all_files = glob.glob(VELA_dir + '/10Mpc*')
 completed = glob.glob('*.ascii')
 print('Files already converted:', completed)
@@ -64,7 +66,7 @@ for file in all_files:
 
 digits_list.sort()
 
-f = open('%s/snapshot_names.txt' % VELA_dir, 'w')
+f = open('%s/snapshot_names.txt' % out_dir, 'w')
 for item in digits_list:
     f.write("%s\n" % item)
 f.close()
