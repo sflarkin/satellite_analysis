@@ -1,0 +1,60 @@
+#PBS -S /bin/bash
+#PBS -N Stellarmassrelation
+#PBS -l select=1:ncpus=1:mpiprocs=1:model=bro
+#PBS -l walltime=20:00:00
+#PBS -q long
+#PBS -j oe
+#PBS -l site=needed=/home1+/nobackupp2
+
+cd $PBS_O_WORKDIR
+
+#ROCKSTAR
+
+export MPI_SHEPHERD=true
+
+#Load NASA environment
+module load mpi-sgi/mpt
+module load comp-intel/2018.3.222
+
+#Change to working directory
+cd $PBS_O_WORKDIR
+
+#Remove outputs from previous runs
+rm test_output.dat
+
+#Start the server
+/home1/sflarkin/build/baserockstar/rockstar/rockstar -c /nobackupp2/sflarkin/ CONFIGFILELOCATION &> server.dat &
+
+#Copy the auto-rockstar.cfg file to the working directory
+perl -e 'sleep 1 while (!(-e "/nobackupp2/sflarkin/ OUTPUTLOCATION /auto-rockstar.cfg"))'
+mv /nobackupp2/sflarkin/ OUTPUTLOCATION /auto-rockstar.cfg .
+pwd
+
+#Start the intel MPI controller
+
+#Execute the reader processes
+mpiexec -ppn 1 -np 1 /home1/sflarkin/build/baserockstar/rockstar/rockstar -c auto-rockstar.cfg >> test_output.dat 2>&1 &
+sleep 20
+pwd
+#Execute the analysis processes
+mpiexec -ppn 1 -np 1 /home1/sflarkin/build/baserockstar/rockstar/rockstar -c auto-rockstar.cfg >> test_output.dat 2>&1
+
+#CONSISTENTTREES
+
+#create the outputs needed for consistent-trees
+cd /nobackupp2/sflarkin/ ROCKSTARDIRECTORY
+perl ~/build/baserockstar/rockstar/scripts/gen_merger_cfg.pl /nobackupp2/sflarkin/ ROCKSTARCONFIGFILE
+
+#run consistant trees
+cd ~/build/baserockstar/consistent-trees
+
+mpiexec -ppn 1 -np 1 perl do_merger_tree_np.pl /nobackupp2/sflarkin/ ROCKSTARFILES /outputs/merger_tree.cfg
+
+#create the consistant tree halo catalog
+mpiexec -ppn 1 -np 1 perl halo_trees_to_catalog.pl /nobackupp2/sflarkin/ ROCKSTARFILES /outputs/merger_tree.cfg
+
+module use ~/privatemodules
+module load conda3
+
+#this is for generating the catalog of stellarmass values
+python ~/build/satellite_analysis/consistentscripts/stellarmassrelation.py /nobackupp2/sflarkin/ HLISTS LOCATION hlists /nobackupp2/sflarkin/ SIMLOCATIONS /nobackupp2/sflarkin/stellarmassrelation/ OUTPUTDIRECTORY --gen_xyz True

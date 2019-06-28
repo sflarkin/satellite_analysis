@@ -19,7 +19,7 @@ def parse():
     parser.add_argument('VELA_dir')
     parser.add_argument('out_dir')
     parser.add_argument('--gen_xyz', nargs='?', default='False')
-    parser.add_argument('--subhalos', nargs='?', default='True')
+    parser.add_argument('--subhalos', nargs='?', default='False')
     args = vars(parser.parse_args())
     return args
 
@@ -77,9 +77,14 @@ for index in consistent.snapshot_index:
         pid_list = []
         mvir_list = []
         mpeak_list = []
-        stellar_mass_list = []
-        darkmatter_mass_yt_list = []
-        mass_ratio_list = []
+        stellar_mass_10rvir_list = []
+        darkmatter_mass_10vir_list = []
+        stellar_mass_15rvir_list = []
+        darkmatter_mass_15rvir_list = []
+        stellar_mass_20vir_list = []
+        darkmatter_mass_20rvir_list = []
+        stellar_mass_rvir_list = []
+        darkmatter_mass_rvir_list = []
         
         #create the list of halo_ids of the largest halos to plot if desired
         if gen_xyz == 'True':
@@ -97,7 +102,18 @@ for index in consistent.snapshot_index:
             Id = halo[1]
             center = [x, y, z]
             sp = ds.sphere(center, (rvir, 'kpc/h'))
-            stellar_mass, darkmatter_mass_yt = sp.quantities.total_quantity([('stars', 'particle_mass'),\
+            stellar_mass_rvir, darkmatter_mass_rvir = sp.quantities.total_quantity([('stars', 'particle_mass'),\
+                                                                          ('darkmatter', 'particle_mass')])
+            sp1 = ds.sphere(center, (rvir*.1, 'kpc/h'))
+            stellar_mass_10rvir, darkmatter_mass_10rvir = sp1.quantities.total_quantity([('stars', 'particle_mass'),\
+                                                                          ('darkmatter', 'particle_mass')])
+            
+            sp2 = ds.sphere(center, (rvir*.15, 'kpc/h'))
+            stellar_mass_15rvir, darkmatter_mass_15rvir = sp2.quantities.total_quantity([('stars', 'particle_mass'),\
+                                                                          ('darkmatter', 'particle_mass')])
+            
+            sp3 = ds.sphere(center, (rvir*.2, 'kpc/h'))
+            stellar_mass_20rvir, darkmatter_mass_20rvir = sp3.quantities.total_quantity([('stars', 'particle_mass'),\
                                                                           ('darkmatter', 'particle_mass')])
             #get the Mpeak, Mvir, and pid if its a satellite or not
             pid = halo[5]
@@ -108,9 +124,14 @@ for index in consistent.snapshot_index:
             pid_list.append(pid)
             mvir_list.append(mvir)
             mpeak_list.append(mpeak)
-            stellar_mass_list.append(stellar_mass.in_units('Msun/h'))
-            darkmatter_mass_yt_list.append(darkmatter_mass.in_units('Msun/h'))
-            mass_ratio_list.append(stellar_mass/darkmatter_mass)
+            stellar_mass_10rvir_list.append(stellar_mass_10rvir.in_units('Msun/h'))
+            darkmatter_mass_10vir_list.append(darkmatter_mass_10rvir.in_units('Msun/h'))
+            stellar_mass_15rvir_list.append(stellar_mass_15rvir.in_units('Msun/h'))
+            darkmatter_mass_15rvir_list.append(darkmatter_mass_15rvir.in_units('Msun/h'))
+            stellar_mass_20vir_list.append(stellar_mass_20rvir.in_units('Msun/h'))
+            darkmatter_mass_20rvir_list.append(darkmatter_mass_20rvir.in_units('Msun/h'))
+            stellar_mass_rvir_list.append(stellar_mass_rvir.in_units('Msun/h'))
+            darkmatter_mass_rvir_list.append(darkmatter_mass_rvir.in_units('Msun/h'))
             
             #Now make the xyz graphs if wanted.
             if gen_xyz == 'True':
@@ -120,7 +141,11 @@ for index in consistent.snapshot_index:
     
         #Now write the halo mass information to an ascii file
         file_name = '%s/halomass%s.ascii' % (out_dir, VELA_a)
-        data = Table([Id_list, pid_list, mvir_list, mpeak_list, stellar_mass_list, darkmatter_mass_yt_list, mass_ratio_list],\
-                     names=['Id[1]', 'Pid[5]', 'Mvir[11]', 'Mpeak[61]' 'stellar_mass', 'darkmatter_mass_yt', 'mass_ratio'])
+        data = Table([Id_list, pid_list, mvir_list, mpeak_list, stellar_mass_10rvir_list, darkmatter_mass_10rvir_list, \
+                      stellar_mass_15rvir_list, darkmatter_mass_15rvir_list, stellar_mass_20vir_list, \
+                      darkmatter_mass_20rvir_list, stellar_mass_rvir_list, darkmatter_mass_rvir_list],\
+                     names=['Id[1]', 'Pid[5]', 'Mvir[11]', 'Mpeak[61]', 'stellarmass_.1rvir', 'darkmatter_mass_.1rivr',\
+                            'stellarmass_.15rvir', 'darkmattermass_.15rvir', 'stellarmass_.2rvir', 'darkmattermass_.2rvir',\
+                           'stellarmass_rvir', 'darkmattermass_rvir'])
         ascii.write(data, output=file_name, overwrite=True)
             
