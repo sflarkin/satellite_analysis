@@ -16,7 +16,7 @@ def parse():
     parser.add_argument('input_dir')
     parser.add_argument('VELA_dir')
     parser.add_argument('VELA_number')
-    parser.add_argument('--subhalos', nargs='?', default=True)
+    parser.add_argument('--subhalos', nargs='?', default='True')
     args = vars(parser.parse_args())
     return args
 
@@ -75,7 +75,7 @@ for index in consistent.snapshot_index:
         x = float(largest_halo[17])/domain_width
         y = float(largest_halo[18])/domain_width
         z = float(largest_halo[19])/domain_width
-        rvir = float(largest_halo[11])
+        rvir = float(largest_halo[11])*(float(VELA_a)/1000)
         center = [x, y, z]
         print(rvir, center)
         #extract the rvir sphere around the largest halo 
@@ -85,10 +85,10 @@ for index in consistent.snapshot_index:
         if tomer_number == [] or len(tomer_number) > 1:
             print('Could not find corresponding Tomer Snapshot Data for snap', VELA_a)
             tomer_center = [0,0,0]
-            tomer_rvir = [0]
+            tomer_rvir = 0.0
         else:
             tomer_center = [x_tomer[tomer_number[0]], y_tomer[tomer_number[0]], z_tomer[tomer_number[0]]]
-            tomer_rvir = r_vir_tomer[tomer_number[0]]
+            tomer_rvir = r_vir_tomer[tomer_number[0]]*1.43
         
         #call the plotting function
         rvirprj.rvirprojectionsallhalos(ds, center, rvir, sp, tomer_center, tomer_rvir, halo_data, domain_width, input_dir, VELA_a)

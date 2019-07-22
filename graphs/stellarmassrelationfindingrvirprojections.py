@@ -151,35 +151,44 @@ def rvirprojectionsallhalos(ds, center, rvir, sp, tomer_center, tomer_rvir, halo
     #create the 3 different x-y-z projection plots to add to the grid, one for stars and two for darkmatter
     a = yt.ParticlePlot(ds, ('stars', 'particle_position_x'), ('stars', 'particle_position_y'),\
                           ('stars', 'particle_mass'), center=center, width=(rvir*3, "kpc/h"), data_source=sp)
+    a.set_unit(('stars','particle_mass'), 'Msun')
     b = yt.ParticlePlot(ds, ('stars', 'particle_position_y'), ('stars', 'particle_position_z'),\
                           ('stars', 'particle_mass'), center=center, width=(rvir*3, "kpc/h"), data_source=sp)
+    b.set_unit(('stars','particle_mass'), 'Msun')
     c = yt.ParticlePlot(ds, ('stars', 'particle_position_z'), ('stars', 'particle_position_x'),\
                           ('stars', 'particle_mass'), center=center, width=(rvir*3, "kpc/h"), data_source=sp)
+    c.set_unit(('stars','particle_mass'), 'Msun')
             
     d = yt.ParticlePlot(ds, ('darkmatter', 'particle_position_x'), ('darkmatter', 'particle_position_y'),\
                           ('darkmatter', 'particle_mass'), center=center, width=(rvir*3, "kpc/h"), data_source=sp)
+    d.set_unit(('darkmatter','particle_mass'), 'Msun')
     e = yt.ParticlePlot(ds, ('darkmatter', 'particle_position_y'), ('darkmatter', 'particle_position_z'),\
                           ('darkmatter', 'particle_mass'), center=center, width=(rvir*3, "kpc/h"), data_source=sp)
+    e.set_unit(('darkmatter','particle_mass'), 'Msun')
     f = yt.ParticlePlot(ds, ('darkmatter', 'particle_position_z'), ('darkmatter', 'particle_position_x'),\
                           ('darkmatter', 'particle_mass'), center=center, width=(rvir*3, "kpc/h"), data_source=sp)
+    f.set_unit(('darkmatter','particle_mass'), 'Msun')
             
     g = yt.ParticlePlot(ds, ('darkmatter', 'particle_position_x'), ('darkmatter', 'particle_position_y'),\
                           ('darkmatter', 'particle_mass'), center=center, width=(rvir*3, "kpc/h"), data_source=sp)
+    g.set_unit(('darkmatter','particle_mass'), 'Msun')
     h = yt.ParticlePlot(ds, ('darkmatter', 'particle_position_y'), ('darkmatter', 'particle_position_z'),\
                           ('darkmatter', 'particle_mass'), center=center, width=(rvir*3, "kpc/h"), data_source=sp)
+    h.set_unit(('darkmatter','particle_mass'), 'Msun')
     i = yt.ParticlePlot(ds, ('darkmatter', 'particle_position_z'), ('darkmatter', 'particle_position_x'),\
                           ('darkmatter', 'particle_mass'), center=center, width=(rvir*3, "kpc/h"), data_source=sp)
+    i.set_unit(('darkmatter','particle_mass'), 'Msun')
     
     #add the x marker for the largest halo from the rockstar catalog
-    a.annotate_marker(center, 'x', plot_args={'s':100, 'color':'red'})
-    b.annotate_marker(center, 'x', plot_args={'s':100, 'color':'red'})
-    c.annotate_marker(center, 'x', plot_args={'s':100, 'color':'red'})
-    d.annotate_marker(center, 'x', plot_args={'s':100, 'color':'red'})
-    e.annotate_marker(center, 'x', plot_args={'s':100, 'color':'red'})
-    f.annotate_marker(center, 'x', plot_args={'s':100, 'color':'red'})
-    g.annotate_marker(center, 'x', plot_args={'s':100, 'color':'red'})
-    h.annotate_marker(center, 'x', plot_args={'s':100, 'color':'red'})
-    i.annotate_marker(center, 'x', plot_args={'s':100, 'color':'red'})
+    a.annotate_marker(center, 'o', plot_args={'s':100, 'color':'red'})
+    b.annotate_marker(center, 'o', plot_args={'s':100, 'color':'red'})
+    c.annotate_marker(center, 'o', plot_args={'s':100, 'color':'red'})
+    d.annotate_marker(center, 'o', plot_args={'s':100, 'color':'red'})
+    e.annotate_marker(center, 'o', plot_args={'s':100, 'color':'red'})
+    f.annotate_marker(center, 'o', plot_args={'s':100, 'color':'red'})
+    g.annotate_marker(center, 'o', plot_args={'s':100, 'color':'red'})
+    h.annotate_marker(center, 'o', plot_args={'s':100, 'color':'red'})
+    i.annotate_marker(center, 'o', plot_args={'s':100, 'color':'red'})
     
     #add the x marker for the tomer catalog
     a.annotate_marker(tomer_center, 'x', plot_args={'s':100, 'color':'black'})
@@ -193,21 +202,45 @@ def rvirprojectionsallhalos(ds, center, rvir, sp, tomer_center, tomer_rvir, halo
     i.annotate_marker(tomer_center, 'x', plot_args={'s':100, 'color':'black'})
     
     #add the circle for the tomer catalog for the 3rd row
-    g.annotate_sphere(tomer_center, radius=(rvir, 'kpc'), circle_args={'color':'black'})
-    h.annotate_sphere(tomer_center, radius=(rvir, 'kpc'), circle_args={'color':'black'})
-    i.annotate_sphere(tomer_center, radius=(rvir, 'kpc'), circle_args={'color':'black'})
+    g.annotate_sphere(tomer_center, radius=(tomer_rvir, 'kpc/h'), circle_args={'color':'black'})
+    h.annotate_sphere(tomer_center, radius=(tomer_rvir, 'kpc/h'), circle_args={'color':'black'})
+    i.annotate_sphere(tomer_center, radius=(tomer_rvir, 'kpc/h'), circle_args={'color':'black'})
     
+    #add the title for each column
+    a.annotate_title('Column 1: X-Y Projection')
+    b.annotate_title('Column 2: Y-Z Projection')
+    c.annotate_title('Column 3: Z-X Projection')
+    
+    #add annotations for redshift and scale
+    a.annotate_timestamp(corner='lower_left', redshift=True, time=False, draw_inset_box=False, {'color':'black'})
+    a.annotate_scale(corner='lower_right', unit='Kpc/h', {'color':'black'})
+    b.annotate_timestamp(corner='lower_left', redshift=True, time=False, draw_inset_box=False, {'color':'black'})
+    b.annotate_scale(corner='lower_right', unit='Kpc/h', {'color':'black'})
+    c.annotate_timestamp(corner='lower_left', redshift=True, time=False, draw_inset_box=False, {'color':'black'})
+    c.annotate_scale(corner='lower_right', unit='Kpc/h', {'color':'black'})
+    d.annotate_timestamp(corner='lower_left', redshift=True, time=False, draw_inset_box=False, {'color':'black'})
+    d.annotate_scale(corner='lower_right', unit='Kpc/h', {'color':'black'})
+    e.annotate_timestamp(corner='lower_left', redshift=True, time=False, draw_inset_box=False, {'color':'black'})
+    e.annotate_scale(corner='lower_right', unit='Kpc/h', {'color':'black'})
+    f.annotate_timestamp(corner='lower_left', redshift=True, time=False, draw_inset_box=False, {'color':'black'})
+    f.annotate_scale(corner='lower_right', unit='Kpc/h', {'color':'black'})
+    g.annotate_scale(corner='lower_right', unit='Kpc/h', {'color':'black'})
+    h.annotate_scale(corner='lower_right', unit='Kpc/h', {'color':'black'})
+    i.annotate_scale(corner='lower_right', unit='Kpc/h', {'color':'black'})
+    
+    #add the annotations for what the dot and x is, and the color circles
+    a.annotate_text([1,1], 'Red dot: Rockstar Center \n Black X: Nir Center', coord_system='axis'
     
     for halo in halo_data:
         x = float(halo[17])/domain_width
         y = float(halo[18])/domain_width
         z = float(halo[19])/domain_width
-        rvir = float(halo[11])
+        rvir_smaller_halos = float(halo[11])*(float(VELA_a)/1000)
         center = [x, y, z]
         
-        g.annotate_sphere(center, radius=(rvir, 'kpc/h'), circle_args={'color':'red'})
-        h.annotate_sphere(center, radius=(rvir, 'kpc/h'), circle_args={'color':'red'})
-        i.annotate_sphere(center, radius=(rvir, 'kpc/h'), circle_args={'color':'red'})
+        g.annotate_sphere(center, radius=(rvir_smaller_halos, 'kpc/h'), circle_args={'color':'red'})
+        h.annotate_sphere(center, radius=(rvir_smaller_halos, 'kpc/h'), circle_args={'color':'red'})
+        i.annotate_sphere(center, radius=(rvir_smaller_halos, 'kpc/h'), circle_args={'color':'red'})
             
     index = 0
     for letter in [a,b,c]:

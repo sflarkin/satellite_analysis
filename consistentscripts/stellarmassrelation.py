@@ -78,10 +78,10 @@ for index in consistent.snapshot_index:
         mvir_list = []
         mpeak_list = []
         stellar_mass_10rvir_list = []
-        darkmatter_mass_10vir_list = []
+        darkmatter_mass_10rvir_list = []
         stellar_mass_15rvir_list = []
         darkmatter_mass_15rvir_list = []
-        stellar_mass_20vir_list = []
+        stellar_mass_20rvir_list = []
         darkmatter_mass_20rvir_list = []
         stellar_mass_rvir_list = []
         darkmatter_mass_rvir_list = []
@@ -125,10 +125,10 @@ for index in consistent.snapshot_index:
             mvir_list.append(mvir)
             mpeak_list.append(mpeak)
             stellar_mass_10rvir_list.append(stellar_mass_10rvir.in_units('Msun/h'))
-            darkmatter_mass_10vir_list.append(darkmatter_mass_10rvir.in_units('Msun/h'))
+            darkmatter_mass_10rvir_list.append(darkmatter_mass_10rvir.in_units('Msun/h'))
             stellar_mass_15rvir_list.append(stellar_mass_15rvir.in_units('Msun/h'))
             darkmatter_mass_15rvir_list.append(darkmatter_mass_15rvir.in_units('Msun/h'))
-            stellar_mass_20vir_list.append(stellar_mass_20rvir.in_units('Msun/h'))
+            stellar_mass_20rvir_list.append(stellar_mass_20rvir.in_units('Msun/h'))
             darkmatter_mass_20rvir_list.append(darkmatter_mass_20rvir.in_units('Msun/h'))
             stellar_mass_rvir_list.append(stellar_mass_rvir.in_units('Msun/h'))
             darkmatter_mass_rvir_list.append(darkmatter_mass_rvir.in_units('Msun/h'))
@@ -142,7 +142,7 @@ for index in consistent.snapshot_index:
         #Now write the halo mass information to an ascii file
         file_name = '%s/halomass%s.ascii' % (out_dir, VELA_a)
         data = Table([Id_list, pid_list, mvir_list, mpeak_list, stellar_mass_10rvir_list, darkmatter_mass_10rvir_list, \
-                      stellar_mass_15rvir_list, darkmatter_mass_15rvir_list, stellar_mass_20vir_list, \
+                      stellar_mass_15rvir_list, darkmatter_mass_15rvir_list, stellar_mass_20rvir_list, \
                       darkmatter_mass_20rvir_list, stellar_mass_rvir_list, darkmatter_mass_rvir_list],\
                      names=['Id[1]', 'Pid[5]', 'Mvir[11]', 'Mpeak[61]', 'stellarmass_.1rvir', 'darkmatter_mass_.1rivr',\
                             'stellarmass_.15rvir', 'darkmattermass_.15rvir', 'stellarmass_.2rvir', 'darkmattermass_.2rvir',\
