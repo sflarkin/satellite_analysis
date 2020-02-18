@@ -2,20 +2,19 @@ import yt
 import glob
 import numpy as np
 import matplotlib.pyplot as plt
-import argparse
+import os, argparse
 from mpl_toolkits.axes_grid1 import AxesGrid
 from satellite_analysis.catalogreaders import consistentcatalogreader as consistent
 from satellite_analysis.catalogreaders import tomercatalogreader as tomer
-from satellite_analysis.graphs import stellarmassrelationfindingrvirprojections as rvirprj
-
-
-#need to add arguments for VELA_dir and input_dir for the rockstarcatalogreader
+from astropy.io import ascii
+from astropy.table import Table, Column, MaskedColumn
 
 def parse():
     parser = argparse.ArgumentParser(formatter_class=argparse.ArgumentDefaultsHelpFormatter)
     parser.add_argument('input_dir')
     parser.add_argument('VELA_dir')
     parser.add_argument('VELA_number')
+    parser.add_argument('out_dir')
     parser.add_argument('--subhalos', nargs='?', default='True')
     args = vars(parser.parse_args())
     return args
@@ -26,6 +25,7 @@ args = parse()
 input_dir = args['input_dir']
 VELA_dir = args['VELA_dir']
 VELA_number = args['VELA_number']
+out_dir = args['out_dir']
 subhalos = args['subhalos']
 
 #input_dir = '/Users/user1/documents/VELA07/hlists'
@@ -66,20 +66,24 @@ for index in consistent.snapshot_index:
     else:
         print('Finding MVir Masses for snap:', VELA_a)
         #load the yt snap and the halo_data from the catalog reader
+        
+        stellar_mass_rvir_list, darkmatter_mass_rvir_list, gas_mass_rvir_list = [], [], []
+        stellar_Nir_rvir_list, darkmatter_Nir_rvir_list, gas_Nir_rvir_list = [], [], []
+        Mvir_rockstar_list = []
+        
         ds = yt.load(VELA_snaps[position[0]])
-        halo_data = consistent.halo_data_sorted[index][0]
+        halo_data = consistent.halo_data_largest[index][0]
         
         #define the parameters for the largest halo for plotting
-        domain_width = float(ds.domain_width.in_units('Mpccm/h')[0])
+        domain_width = float(ds.domain_width.in_units('Mpc/h')[0])
         largest_halo = halo_data[0]
         x = float(largest_halo[17])/domain_width
         y = float(largest_halo[18])/domain_width
         z = float(largest_halo[19])/domain_width
-        rvir = float(largest_halo[11])*(float(VELA_a)/1000) / .7
+        rvir = float(largest_halo[11])*(float(VELA_a)/1000) / .7 #convert this to proper Kpc
         center = [x, y, z]
-        print(rvir, center)
+        Mvir_rockstar = float(largest_halo[10]) /.7
         #extract the rvir sphere around the largest halo 
-        sp = ds.sphere(center, (rvir*1.5, 'kpc'))
         
         tomer_number = [pos for pos, number in enumerate(tomer_scales) if number == VELA_a]
         if tomer_number == [] or len(tomer_number) > 1:
@@ -90,7 +94,26 @@ for index in consistent.snapshot_index:
             tomer_center = [x_tomer[tomer_number[0]], y_tomer[tomer_number[0]], z_tomer[tomer_number[0]]]
             tomer_rvir = r_vir_tomer[tomer_number[0]]
         
-        #call the plotting function
-        rvirprj.rvirprojectionsallhalos(ds, center, rvir, sp, tomer_center, tomer_rvir, halo_data, domain_width, input_dir, VELA_a)
-    
-            
+        sp = ds.sphere(center, (rvir, 'kpc'))
+        sp_Nir = ds.sphere(tomer_center, (tomer_rvir, 'kpc'))
+        stellar_mass_rvir, darkmatter_mass_rvir, gas_mass_rvir = sp.quantities.total_quantity([('stars', 'particle_mass'),\
+                                                                                               ('darkmatter', 'particle_mass'),\
+                                                                                               ('gas', 'cell_mass')])
+        
+        stellar_Nir_rvir, darkmatter_Nir_rvir, gas_Nir_rvir = sp_Nir.quantities.total_quantity([('stars', 'particle_mass'),\
+                                                                                            ('darkmatter', 'particle_mass'),\
+                                                                                            ('gas', 'cell_mass')])
+        Mvir_rockstar_list.append(Mvir_rockstar)
+        stellar_mass_rvir_list.append(stellar_mass_rvir.in_units('Msun'))
+        darkmatter_mass_rvir_list.append(darkmatter_mass_rvir.in_units('Msun'))
+        gas_mass_rvir_list.append(gas_mass_rvir.in_units('Msun'))
+        
+        stellar_Nir_rvir_list.append(stellar_Nir_rvir.in_units('Msun'))
+        darkmatter_Nir_rvir_list.append(darkmatter_Nir_rvir.in_units('Msun'))
+        gas_Nir_rvir_list.append(gas_Nir_rvir.in_units('Msun'))
+        
+        file_name = '%s/massinrvir%s.ascii' % (out_dir, VELA_a)
+        data = Table([Mvir_rockstar_list, stellar_mass_rvir_list, darkmatter_mass_rvir_list, gas_mass_rvir_list,\                                      stellar_Nir_rvir_list, darkmatter_Nir_rvir_list, gas_Nir_rvir_list],
+                     names=['Mvir_rockstar', 'Darkmatter_Rvir', 'Stellar_Rvir', 'Gas_Rvir', 'Darkmatter(Nir)_Rvir',\
+                            'Stellar(Nir)_Rvir', 'Gas(Nir)_Rvir'])
+        ascii.write(data, output=file_name, overwrite=True) 

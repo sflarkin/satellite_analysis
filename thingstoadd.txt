@@ -18,6 +18,8 @@
 
 
 -should I rework the sorted part of the catalog readers to just do Mvir?
+--yes, finish this for the rockstar_catalog_reader
+--also make sure all of the calls still work
 
 
 

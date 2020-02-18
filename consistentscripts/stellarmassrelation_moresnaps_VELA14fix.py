@@ -47,30 +47,37 @@ if not os.path.exists(out_dir):
 #Now run the rockstarcatalogreader to get the halo location data.
 
 #input_dir = '/Users/user1/Documents/VELA07/baserockstar_ascii/subhalos/'
-consistent.consistent_catalog_reader(input_dir, subhalos=subhalos, halo_number=1)
+consistent.consistent_catalog_reader(input_dir, remove_subhalos=subhalos, halo_number=1)
 
 #Collect the names of the VELA simulations in the VELA_dir so that star data can be extracted.
 VELA_snaps = glob.glob(VELA_dir + '/10MpcBox*')
 VELA_snaps.sort()
 
-#Extract the scale factors from the VELA snapshot files to match to the rockstar catalogs.
-VELA_index = []
-for snap in VELA_snaps:
-    period = [pos for pos, char in enumerate(snap) if char == '.']
-    number = snap[period[-2]+1:period[-1]]
-    VELA_index.append(number)
-VELA_index.sort()
+finished_snaps = glob.glob('{}/*'.format(out_dir))
 
-#Loop over the rockstar catalogs for each snapshot.
-for index in consistent.snapshot_index:
-    VELA_a = consistent.consistent_file_index[index]
-    position = [pos for pos, loc in enumerate(VELA_index) if loc == VELA_a]
+#Extract the scale factors from the VELA snapshot files to match to the rockstar catalogs.
+
+#Loop over each snap file
+
+for snap in VELA_snaps:
+    ds = yt.load(snap)
+    current_scale = str(ds.scale_factor)[2:5]
+    print('Trying to find matching Consistent File for scale: {}'.format(current_scale))
+    
+    position = [pos for pos, loc in enumerate(consistent.consistent_file_index) if loc == current_scale]
+    
+    file_name = '%s/halomass%s.ascii' % (out_dir, current_scale)
+    
     if position == [] or len(position) > 1:
-        print('Could not find corresponding VELA 10Mpc File for snapshot:', VELA_a)
-    else:
-        print('Finding MVir Masses for snap:', VELA_a)
-        ds = yt.load(VELA_snaps[position[0]])
-        halo_data = consistent.halo_data_all[index]
+        print('Could not find corresponding consistent trees data for file {}'.format(snap))
+    
+    elif file_name in finished_snaps:
+        print('Already Generated File for Scale {}'.format(current_scale))
+        
+    else:    
+        print('Finding MVir Masses for snap:{}'.format(snap))
+        print('Matching Scales Test:{} {}'.format(current_scale, consistent.consistent_file_index[position[0]]))
+        halo_data = consistent.halo_data_all[position[0]]
         
         #Create the lists to hold the halo data untill they are written to an ascii file.
         Id_list = []
@@ -96,7 +103,7 @@ for index in consistent.snapshot_index:
             x = float(halo[17])/domain_width
             y = float(halo[18])/domain_width
             z = float(halo[19])/domain_width
-            rvir = float(halo[11])*(float(VELA_a)/1000) /.7
+            rvir = float(halo[11])*(float(current_scale)/1000) /.7
             Id = halo[1]
             center = [x, y, z]
             
@@ -136,10 +143,10 @@ for index in consistent.snapshot_index:
             if gen_xyz == 'True':
                 #check if the current Id is in the top X halos we want graphs for
                 if Id in largest_halo_ids:
-                    rvirprj.rvirprojections(ds, center, rvir, sp, out_dir, VELA_a, Id)
+                    rvirprj.rvirprojections(ds, center, rvir, sp, out_dir, current_scale, Id)
     
         #Now write the halo mass information to an ascii file
-        file_name = '%s/halomass%s.ascii' % (out_dir, VELA_a)
+        file_name = '%s/halomass%s.ascii' % (out_dir, current_scale)
         data = Table([Id_list, pid_list, mvir_list, mpeak_list, stellar_mass_10rvir_list, stellar_mass_15rvir_list, stellar_mass_20rvir_list, stellar_mass_rvir_list, gas_mass_rvir_list, darkmatter_mass_rvir_list],\
                      names=['Id[1]', 'Pid[5]', 'Mvir[11]', 'Mpeak[61]', 'stars_.1rvir', 'stars .15rvir', 'stars .2rvir',\
                            'stars rvir', 'gas rvir', 'dark rvir'])

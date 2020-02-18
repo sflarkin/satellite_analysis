@@ -19,7 +19,7 @@ def centralandsatellitegalaxypapercomparisons(darkmattermasscentral, stellarmass
     plt.scatter(darkmattermasssatellite, massratiosatellite, s = 1, c = 'r')
     plt.fill_between(x, Behroozirelation[5], Behroozirelation[4], alpha=0.5, edgecolor='#CC4F1B', facecolor='#FF9848')
     plt.fill_between(x, Pueblarelation[5], Pueblarelation[4], alpha=0.5, edgecolor='#1B2ACC', facecolor='#089FFF')
-    plt.legend(('Behroozi2013', 'Puebla2017', 'Host Galaxies', 'Satellite Galaxies'))
+    plt.legend(('Behroozi2013', 'Rodriguez-Puebla2017', 'Host Galaxies', 'Satellite Galaxies'))
     
     plt.subplot(122)
     plt.xlabel('halomass')
@@ -52,7 +52,7 @@ def satellitegalaxypapercomparisons(darkmattermass, stellarmass, massratio, Behr
     plt.scatter(darkmattermass, massratio, s = 1, c = 'r')
     plt.fill_between(x, Behroozirelation[5], Behroozirelation[4], alpha=0.5, edgecolor='#CC4F1B', facecolor='#FF9848')
     plt.fill_between(x, Pueblarelation[5], Pueblarelation[4], alpha=0.5, edgecolor='#1B2ACC', facecolor='#089FFF')
-    plt.legend(('Behroozi2013', 'Puebla2017', 'Satellite Galaxies'))
+    plt.legend(('Behroozi2013', 'Rodriguez-Puebla2017', 'Satellite Galaxies'))
     
     plt.subplot(122)
     plt.xlabel('halomass')
@@ -84,7 +84,7 @@ def centralgalaxypapercomparisons(darkmattermass, stellarmass, massratio, Behroo
     plt.scatter(darkmattermass, massratio, s = 1)
     plt.fill_between(x, Behroozirelation[5], Behroozirelation[4], alpha=0.5, edgecolor='#CC4F1B', facecolor='#FF9848')
     plt.fill_between(x, Pueblarelation[5], Pueblarelation[4], alpha=0.5, edgecolor='#1B2ACC', facecolor='#089FFF')
-    plt.legend(('Behroozi2013', 'Puebla2017', 'Host Galaxies'))
+    plt.legend(('Behroozi2013', 'Rodriguez-Puebla2017', 'Host Galaxies'))
     
     plt.subplot(122)
     plt.xlabel('halomass')

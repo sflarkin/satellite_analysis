@@ -17,22 +17,20 @@ args = parse()
 VELA_dir = args['VELA_dir']
 out_dir = args['out_dir']
 all_files = glob.glob(VELA_dir + '/10Mpc*')
-completed = glob.glob('*.ascii')
+completed = glob.glob(VELA_dir + '/*.ascii')
 print('Files already converted:', completed)
 digits_list = []
+
 for file in all_files:
-
-    #extract the snapshot number for use
-    digits = file[-5:-2]
-    digits_list.append(str(digits))
-    file_name = VELA_dir + '/' + str(digits) + '.ascii'
-    print(file_name)
-    if file_name not in completed:
-
-        #load the particles for writing
-
-        ds = yt.load(file)
-
+    
+    #load the dataset to find the scale to see if the file is already made
+    ds = yt.load(file)
+    scale_for_file = str(ds.scale_factor)[2:5]
+    file_name = '{}/{}.ascii'.format(VELA_dir, scale_for_file)
+    
+    if fine_name not in completed:
+        
+        digits_list.append(scale_for_file)
         ad = ds.all_data()
         masses = yt.np.unique(ad[('darkmatter', 'particle_mass')])
         #filter out the darkmatter0 particles
@@ -42,9 +40,9 @@ for file in all_files:
         yt.add_particle_filter('darkmatter0', function=mass_filter, filtered_type='darkmatter', requires=['particle_mass'])
         ds.add_particle_filter('darkmatter0')
 
-        x = ad['darkmatter0', "particle_position_x"].in_units('Mpc/h')
-        y = ad['darkmatter0', "particle_position_y"].in_units('Mpc/h')
-        z = ad['darkmatter0', "particle_position_z"].in_units('Mpc/h')
+        x = ad['darkmatter0', "particle_position_x"].in_units('Mpccm/h')
+        y = ad['darkmatter0', "particle_position_y"].in_units('Mpccm/h')
+        z = ad['darkmatter0', "particle_position_z"].in_units('Mpccm/h')
 
         vx = ad['darkmatter0', "particle_velocity_x"].in_units('km/s')
         vy = ad['darkmatter0', "particle_velocity_y"].in_units('km/s')
@@ -59,7 +57,8 @@ for file in all_files:
 
         #create the ascii table
         data = Table([x, y, z, vx, vy, vz, ids], names=['x', 'y', 'z', 'vx', 'vy', 'vz', 'id'], meta=comment)
-
+        
+        
         ascii.write(data, output=file_name, comment='#')
 
 #now write the snapshot_names.txt file

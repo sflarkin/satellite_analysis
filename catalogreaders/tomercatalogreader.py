@@ -14,7 +14,7 @@ def read_tomer(galaxynumber):
     sgal_attributes_cat = pd.read_pickle(path + 'gal_R_attribute_cat.pkl')
     sgal_attributes_cat.set_index(['sgal_id'], inplace=True)
     
-    important_col = ['center[0](code)', 'center[1](code)', 'center[2](code)', 'aexpn','galaxynumber','r_vir[kpc]', 'M_rvir[Msun]', 'Mdarkmatter(0.1rvir)', 'Mdarkmatter(0.2rvir)']
+    #important_col = ['center[0](code)', 'center[1](code)', 'center[2](code)', 'aexpn','galaxynumber','r_vir[kpc]', 'M_rvir[Msun]', 'Mdarkmatter(0.1rvir)', 'Mdarkmatter(0.2rvir)']
     cen_gal_cat_s = cen_gal_cat[cen_gal_cat['gen'] == 'VELA_v2'][cen_gal_cat['galaxynumber'] == galaxynumber][cen_gal_cat['type'] == 'Thick']
 
-    tomer_list = cen_gal_cat_s[important_col]
+    tomer_list = cen_gal_cat_s
