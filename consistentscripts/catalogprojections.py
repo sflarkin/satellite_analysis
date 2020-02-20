@@ -4,18 +4,24 @@ import yt
 import glob
 import numpy as np
 import random
-import argparse
+import os, argparse
 import matplotlib.pyplot as plt
 plt.switch_backend('agg')
 from satellite_analysis.catalogreaders import consistentcatalogreader as consistent 
 from satellite_analysis.catalogreaders import tomercatalogreader as tomer
 
 def parse():
-    parser = argparse.ArgumentParser(formatter_class=argparse.ArgumentDefaultsHelpFormatter)
-    parser.add_argument('input_dir')
-    parser.add_argument('VELA_dir')
-    parser.add_argument('VELA_number')
-    parser.add_argument('out_dir')
+    parser = argparse.ArgumentParser(formatter_class=argparse.ArgumentDefaultsHelpFormatter, 
+                                     description='This is a script for plotting the consistent trees halo catalog onto the 3 2-D coordinate projections of the VELA simulations. This script uses the consistent trees catalog reader found in consistent scripts 
+    )
+    parser.add_argument('consistent_dir', help='The directory where the consistent trees catalog you want to project is located. The form wanted is like: /nobackupp2/sflarkin/GEN3/rockstar001analysis/VELA07/hlists if you want to run for VELA07')
+    parser.add_argument('VELA_dir', help='The directory where the VELA simulation files are located (where the 10MpcBox..., PMcrda0, PMcrs0a0, and stars_a0 files are. The form wanted is like: /nobackupp2/sflarkin/GEN3/VELA07')
+    parser.add_argument('VELA_number', help='The VELA number of the catalog you want projected. For VELA 07, you would want to put: 07')
+    parser.add_argument('out_dir', help='The output directory where you want the images put. If not current directory, the directory will be created.')
+    
+    parser.add_argument('--remove_subhalos', nargs='?', default='True', help='Tells the catalog reader whether to remove subhalos or not, default of True')
+    parser.add_argument('--halo_mass', nargs='?', default=1e+08, help='Tells the catalog reader the minimum mass of halos in MSun you are interested in. Default of 10**8 MSun.')
+    
     args = vars(parser.parse_args())
     return args
 
@@ -25,9 +31,16 @@ input_dir = args['input_dir']
 VELA_dir = args['VELA_dir']
 VELA_number = args['VELA_number']
 out_dir = args['out_dir']
+remove_subhalos = args['remove_subhalos']
+halo_mass = args['halo_mass']
 
+#check to see if the out_dir is a valid location. if it is not, create it.
+if not os.path.exists(out_dir):
+    print('Creating output directory')
+    os.makedirs(out_dir)
+    
 #load in the rockstar catatalog halo data
-consistent.consistent_catalog_reader(input_dir)
+consistent.consistent_catalog_reader(consistent_dir, remove_subhalos=remove_subhalos, halo_mass=halo_mass)
 
 #find the VELA snapshots
 VELA_snaps = glob.glob(VELA_dir + '/10MpcBox_csf512_a0*')

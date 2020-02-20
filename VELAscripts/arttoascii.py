@@ -7,8 +7,8 @@ import glob
 
 def parse():
     parser = argparse.ArgumentParser(formatter_class=argparse.ArgumentDefaultsHelpFormatter)
-    parser.add_argument('VELA_dir')
-    parser.add_argument('out_dir')
+    parser.add_argument('VELA_dir', help='The directory where the VELA simulation files are located (where the 10MpcBox..., PMcrda0, PMcrs0a0, and stars_a0 files are. The form wanted is like: /nobackupp2/sflarkin/GEN3/VELA07')
+    parser.add_argument('out_dir', help='The output directory where you want the images put. If not current directory, the directory will be created.')
     args = vars(parser.parse_args())
     return args
 
@@ -16,8 +16,14 @@ args = parse()
 
 VELA_dir = args['VELA_dir']
 out_dir = args['out_dir']
+
+#check to see if the out_dir exists, and if it does not, create it.
+if not os.path.exists(out_dir):
+    print('Creating output directory')
+    os.makedirs(out_dir)
+
 all_files = glob.glob(VELA_dir + '/10Mpc*')
-completed = glob.glob(VELA_dir + '/*.ascii')
+completed = glob.glob(out_dir + '/*.ascii')
 print('Files already converted:', completed)
 digits_list = []
 

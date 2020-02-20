@@ -2,7 +2,19 @@ import glob
 import numpy as np
 from operator import itemgetter
 
-def consistent_catalog_reader(input_dir, add_all=False, remove_subhalos='False', halo_mass=1e+08, halo_number=1):
+#This is a script that reads and sorts all of the halo data from one VELA simulation of consistent trees halos. To add this to a script, use 
+
+#from satellite_analysis.catalogreaders import consistentcatalogreader as consistent
+
+#consistent.consistent_catalog_reader(input_dir, remove_subhalos=True/False, halo_mass=1e+09)
+
+#the input_dir should be the directory where the consistent catalog is (the folder titled hlists), for example: /nobackupp2/sflarkin/GEN3/rockstar001analysis/VELA07/hlists
+
+#the remove_subhalos flag determines if the halos rockstar/consistent trees identifies as a subhalo of another larger halo are removed from the data when parsing it. If set to 'False' (the default) they are kept in, but can be set to 'True' if you are not interested in them. NOTE: The booleans are in string formatting to allow them to be extracted from a terminal call.
+
+#The halo_mass parameter tells the script the min mass of halos you are interested in, and removes all halos smaller than that limit. The default is 1e+08. NOTE: The add_all should be removed, as it was done before I had implemented the halo mass.
+
+def consistent_catalog_reader(input_dir, remove_subhalos='False', halo_mass=1e+08):
     global halo_data_sorted, halo_data_all, snapshot_index, consistent_file_index, consistent_index
     
     all_files = glob.glob(input_dir + '/*.list')
@@ -60,18 +72,14 @@ def consistent_catalog_reader(input_dir, add_all=False, remove_subhalos='False',
                 catalog.append(line.split())
             del catalog[0:65]
             if catalog != []:
-                #part that derermines if mass is a discriminator or no discriminator
-                if add_all == True:
-                    halo_list = halo_list + catalog
-                if add_all == False:
-                    for lists in catalog:
-                        if float(lists[10]) >= halo_mass:
-                            if remove_subhalos == 'False':
+                for lists in catalog:
+                    if float(lists[10]) >= halo_mass:
+                        if remove_subhalos == 'False':
+                            above_halo_mass.append(lists)
+                        if remove_subhalos == 'True':
+                            if float(lists[5]) == -1:
                                 above_halo_mass.append(lists)
-                            if remove_subhalos == 'True':
-                                if float(lists[5]) == -1:
-                                    above_halo_mass.append(lists)
-                    halo_list = halo_list + above_halo_mass
+                halo_list = halo_list + above_halo_mass
             readfile.close()
         print('Number of Halos found for snapshot', index, ':', len(halo_list))
         halo_data_all[index] = halo_data_all[index] + halo_list
