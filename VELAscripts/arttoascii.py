@@ -34,7 +34,7 @@ for file in all_files:
     scale_for_file = str(ds.scale_factor)[2:5]
     file_name = '{}/{}.ascii'.format(VELA_dir, scale_for_file)
     
-    if fine_name not in completed:
+    if file_name not in completed:
         
         digits_list.append(scale_for_file)
         ad = ds.all_data()
