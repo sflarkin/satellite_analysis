@@ -1,8 +1,8 @@
-# satellite_analysis (need to think of what to actually call it.)
+# VELAHalos
 
 Developed by Sean Larkin
 
-This is the (insert name), a collection of pipeline and analysis scripts for studying galaxies in the Generation 3 and Generation 6 VELA simulations, run by Daniel Ceverino. These scripts were designed to be used via terminal on the NAS pleiades and NERSC Edison supercomputers. 
+This is the VELAHalos, a collection of pipeline and analysis scripts for studying galaxies in the Generation 3 and Generation 6 VELA simulations, run by Daniel Ceverino. These scripts were designed to be used via terminal on the NAS pleiades and NERSC Edison supercomputers. 
 
 # TO DO
 -Update the GEN3snaps.py file to be more customizable on call with terminal?
@@ -117,5 +117,38 @@ from satellite_analysis.catalogreaders import tomercatalogreader as tomer
 
 For more info on what is in the catalog, and to see how to call the info you want from pandas data structure, see the using this catalog that is included in it.
 
+## Rockstar Post Processing Scripts
+
+The rockstar version I used was the single mass rockstar, which can only read particle data if they share the Mass. As the VELA simulations use a variety of particle masses for the stars and dark matter, rockstar was run only on the smallest mass dark matter particles. As a result of this, its calculations of several galaxy properties like the Virial Radius, Virial Mass, etc were smaller than if the stars and gas were included. Because of this, I used the galaxy outputs of rockstar, and ran a suite of post processing scripts to find more accurate halo measurements of several paramaters; Mvir/Rvir, SFR, Higher Mass Dark Matter Contamination, and Metallicity. Below I include a decription of these scripts and their dependancies.
+
+### Proper Mvir Calc
+
+As rockstar underestimates the size of the halos it finds as a result of only looking at the dark matter, to properly analyze the halo population, recalculating the Virial Mass and Radius are of upmost importance. This script takes the halos found in the rockstar catalog larger than a given mass, and recalculates the virial mass. To do this, it creates a profile of the gas, stars, and dark matter of the galaxy out to 2-2.5x times the virial radius found by rockstar. It then finds when the right delta_vir for the current epoch is based on the Virial function from Byron and Norman ???? within 1/5000 of the virial radius of rockstar, which is usually around 0.002 kpc, which is much lower than the error caused by the fitting to a not truly spherical profile or the gas-mesh resolution of 17.5 pc for the inner regions at late times.
+
+After it finds this 'proper' Mvir and Rvir point, it saves the profiles it generated for the gas and stars, and calculates the gas, stars, and dark matter found within 10%, 15%, and 20% of the newly found rvir, and saves them as well.
+
+To run this script, you need the location of the consistent-trees hlists, and the loaction of the VELA simulation files.
+
+*NOTE ABOUT Skipping Halos
+
+### SFR and Contamination
+
+Another important property to understanding halo evolution is the Star Formation Rate (SFR). The script here takes the proper rvir values from the previous script, and calculates the SFR and SSFR for several stellar populations and radii. All populations are calculated for those populations withing 10%, 15%, and 20% of the virial radius. The stellar populations considered are as follows:
+-The Stars Formed since the last timestep
+-The Stars Formed withing the last 2, 3, 4, and 5 timesteps
+-The stars formed within 60 and 100 Myr
+-The stars formed 5, 60, and 100 Myr according to the formula from Tacchella et al. 2016
+
+In addition to the SFRs, this script also sees if any of the higher mass dark matter particles from the less resolved outer regions of the ART code have contaminated any of the halos. This is used primarily as an exclusion paramater for those halos with high contamination (mass of contaminating particles reaching 10% of the total Virial Mass). 
+
+### Gas Abundance and Metallicity
+
+This script calculates the metallicity and metallicity profile for each halo. Need to clean this one up as some of the fields are wrong.
+
+## SQL Database Creation
+
+For several of my post processing scripts, I use a SQL database 
 
 ## Consistent Scripts 
+
+If you do not have access or interest in creating a SQL database for this data, there are a number of scripts that work from the .ascii outputs of the consistent trees and post processing scripts. These are earlier versions of scripts found in the SQL section, so they may not have the full functionality of them, but they preform mostly the same processes.
