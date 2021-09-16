@@ -119,7 +119,7 @@ As rockstar underestimates the size of the halos it finds as a result of only lo
 
 After it finds this 'proper' Mvir and Rvir point, it saves the profiles it generated for the gas and stars, and calculates the gas, stars, and dark matter found within 10%, 15%, and 20% of the newly found rvir, and saves them as well.
 
-This also generates images of the 3 2-d projections of each halo, and saves them. The file names tell you about the halo in question, and are formatted in this way: aXXX_Y_ZZZZZZ.0.png where XXX is the scale factor of the current time, Y is the halo ordering based on size of those for this snapshot (0 being the largest, 1 the second largest, 2 the third largest, and so on), and ZZZZZZ being the halo_id as definded by consistent trees. 
+This also generates images of the 3 2-d projections of the stars and dark matter within each halo, and saves them. The file names tell you about the halo in question, and are formatted in this way: aXXX_Y_ZZZZZZ.0.png where XXX is the scale factor of the current time, Y is the halo ordering based on size of those for this snapshot (0 being the largest, 1 the second largest, 2 the third largest, and so on), and ZZZZZZ being the halo_id as definded by consistent trees. 
 
 Here is what this looks like for the Generation 6 VELA07 Largest Halo at scale factor 0.500.
 
