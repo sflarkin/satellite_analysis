@@ -123,7 +123,7 @@ This also generates images of the 3 2-d projections of each halo, and saves them
 
 Here is what this looks like for the Generation 6 VELA07 Largest Halo at scale factor 0.500.
 
-[Propermvircalc image](READMEfigures/a500_0_id937383.0.png)
+![Propermvircalc image](READMEfigures/a500_0_id937383.0.png)
 
 To run this script, you need the location of the consistent-trees hlists, and the loaction of the VELA simulation files, and run the following command.
 
