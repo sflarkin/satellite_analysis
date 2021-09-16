@@ -37,7 +37,7 @@ VELA_number: The number of the VELA simulation you are working with currently. F
 
 For the Generation 3 VELA simulations, all of the timesteps were saved. For my analysis, I only focused on the timesteps closest to delta-a of 0.0025, starting at a of 0.1 and ending at a of 0.5. In order to sort through all of the files, and find the ~30% of total snapshots I was interested in on Pleiades, I used the script [GEN3snaps.py](VELAscripts/GEN3snaps.py).
 
-This script takes the timing logs of all of the GEN3 simulations, and iterates through each of them, finding the snaps closest to the times you are interested in, and then writing all of the simulation numbers and scale factors to an .ascii folder, where it also includes a shiftc command to move all of them to a directory at once. To change the timesteps it looks for, change the values of the list generator on line 7 to 
+This script takes the timing logs of all of the GEN3 simulations, and iterates through each of them, finding the snaps closest to the times you are interested in, and then writing all of the simulation numbers and scale factors to an .ascii file, where it also includes a shiftc command to move all of them to a directory at once. To change the timesteps it looks for, change the values of the list generator on line 7 to 
 
 `
 list_of_wanted_snaps = [i for i in np.arange(starting_a, ending_a + delta_a, delta_a)]
@@ -48,7 +48,7 @@ where starting_a is the starting scale factor you are interested in, ending_a is
 ### Art to Ascii
 
 [Rockstar](https://bitbucket.org/gfcstanford/rockstar/src/master/README.md), developed by Peter Behroozi, is a 6-D Friends of
-Friends halo finder. While rockstar had been used to analyze the Bolshoi Planck cosmological simulations, another ART simulation, the formatting of the two art formats were different. As a result, rockstar could not be directly run on the VELA simulations, as their ART headers varied significantly. In order to get around this, I used the yt-project to reformat the VELA particle data to the basic ASCII format that works with rockstar.
+Friends halo finder. While rockstar had been used to analyze the Bolshoi Planck cosmological simulations, another ART simulation, the formatting of the two art formats are incompatible. As a result, rockstar could not be directly run on the VELA simulations, as their ART headers varied significantly. In order to get around this, I used the yt-project to reformat the VELA particle data to the basic ASCII format that works with rockstar.
 
 To do this, the script [arttoascii.py](VELAscripts/arttoascii.py) was used. To call this script, use the command
 
@@ -62,16 +62,7 @@ I often used the VELA_dir as the out_dir to keep the simulation files together, 
 
 After rockstar is run, the stellarmassrelation.py script can be run on the consistent trees data to extract the stellar mass and gas mass for each of the galaxies found. This script find the stellar mass within 3 multiples of the Virial Radius, .1, .15, .2 and 1.0 of the RVir. It also finds the gas within 1 Rvir. The process for finding the gas mass is very time intensive, due to yt needing to deconstruct the oc-tree of the VELA sims, so while other radii can be looked into, I have not yet done such analysis. 
 
-This script is required to run many of my post analysis scripts, including all of them looking into the Stellar-Halo Mass Relation. 
-
-
-
-
-## Accessing my Rockstar Runs on Pleiades
-
-The Rockstar runs I completed on pleiades will soon be available for download from the NAS data team site (list site here). Available are the Generation 3 VELA 6 through 15 runs, and all of the Generation 6 runs will be available soon, as the runs themselves finish in the coming weeks. Each catalog is around 2 GB per simulation.
-
-(need to add a discussion of where and what everything is once I have it formatted correctly for the NASA people)
+This script is an early draft used for some prelimary investigations, but is not the most accurate for the VELA simulations. I reccomend using the post processing scripts included here.
 
 
 ## Catalog Readers
@@ -117,6 +108,7 @@ from satellite_analysis.catalogreaders import tomercatalogreader as tomer
 
 For more info on what is in the catalog, and to see how to call the info you want from pandas data structure, see the using this catalog that is included in it.
 
+
 ## Rockstar Post Processing Scripts
 
 The rockstar version I used was the single mass rockstar, which can only read particle data if they share the Mass. As the VELA simulations use a variety of particle masses for the stars and dark matter, rockstar was run only on the smallest mass dark matter particles. As a result of this, its calculations of several galaxy properties like the Virial Radius, Virial Mass, etc were smaller than if the stars and gas were included. Because of this, I used the galaxy outputs of rockstar, and ran a suite of post processing scripts to find more accurate halo measurements of several paramaters; Mvir/Rvir, SFR, Higher Mass Dark Matter Contamination, and Metallicity. Below I include a decription of these scripts and their dependancies.
@@ -127,9 +119,19 @@ As rockstar underestimates the size of the halos it finds as a result of only lo
 
 After it finds this 'proper' Mvir and Rvir point, it saves the profiles it generated for the gas and stars, and calculates the gas, stars, and dark matter found within 10%, 15%, and 20% of the newly found rvir, and saves them as well.
 
-To run this script, you need the location of the consistent-trees hlists, and the loaction of the VELA simulation files.
+This also generates images of the 3 2-d projections of each halo, and saves them. The file names tell you about the halo in question, and are formatted in this way: aXXX_Y_ZZZZZZ.0.png where XXX is the scale factor of the current time, Y is the halo ordering based on size of those for this snapshot (0 being the largest, 1 the second largest, 2 the third largest, and so on), and ZZZZZZ being the halo_id as definded by consistent trees. 
 
-*NOTE ABOUT Skipping Halos
+Here is what this looks like for the Generation 6 VELA07 Largest Halo at scale factor 0.500.
+
+[Propermvircalc image](READMEfigures/a500_0_id937383.0.png)
+
+To run this script, you need the location of the consistent-trees hlists, and the loaction of the VELA simulation files, and run the following command.
+
+```
+/path/to/satellite_analysis/VELAscripts/propermvircalc.py VELA_dir out_dir
+```
+
+*NOTE ABOUT Skipping Halos: In my analysis, I found one halo where this script failed for finding its virial radius and mass. I could not find the reason for this, so this script is designed to skip over halos where this process fails. If you want to find any that have failed, you can compare the number of images made to the number of halos in the output file, as the images are created before this discrimination happens. The other scipts in this section will still work if any are skipped.
 
 ### SFR and Contamination
 
@@ -152,3 +154,11 @@ For several of my post processing scripts, I use a SQL database
 ## Consistent Scripts 
 
 If you do not have access or interest in creating a SQL database for this data, there are a number of scripts that work from the .ascii outputs of the consistent trees and post processing scripts. These are earlier versions of scripts found in the SQL section, so they may not have the full functionality of them, but they preform mostly the same processes.
+
+
+
+## Accessing my Rockstar Runs on Pleiades
+
+The Rockstar runs I completed on pleiades will soon be available for download from the NAS data team site (list site here). Available are the Generation 3 VELA 6 through 15 runs, and all of the Generation 6 runs will be available soon, as the runs themselves finish in the coming weeks. Each catalog is around 2 GB per simulation.
+
+(need to add a discussion of where and what everything is once I have it formatted correctly for the NASA people)
