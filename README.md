@@ -128,7 +128,7 @@ Here is what this looks like for the Generation 6 VELA07 Largest Halo at scale f
 To run this script, you need the location of the consistent-trees hlists, and the loaction of the VELA simulation files, and run the following command.
 
 ```
-/path/to/satellite_analysis/VELAscripts/propermvircalc.py VELA_dir out_dir
+/path/to/satellite_analysis/VELAscripts/propermvircalc.py VELA_dir consistent_dir out_dir
 ```
 
 *NOTE ABOUT Skipping Halos: In my analysis, I found one halo where this script failed for finding its virial radius and mass. I could not find the reason for this, so this script is designed to skip over halos where this process fails. If you want to find any that have failed, you can compare the number of images made to the number of halos in the output file, as the images are created before this discrimination happens. The other scipts in this section will still work if any are skipped.
@@ -142,6 +142,17 @@ Another important property to understanding halo evolution is the Star Formation
 -The stars formed 5, 60, and 100 Myr according to the formula from Tacchella et al. 2016
 
 In addition to the SFRs, this script also sees if any of the higher mass dark matter particles from the less resolved outer regions of the ART code have contaminated any of the halos. This is used primarily as an exclusion paramater for those halos with high contamination (mass of contaminating particles reaching 10% of the total Virial Mass). 
+
+This script, like the propermvircalc script, also makes projections of halos, but only in certain conditions. There are two cases where images are made; if the contamination of larger mass dark matter particles excedes 1% of the total virial mass, and if there are any dark matter particles of the 3rd and larger masses, as those being present means something very strange is afoot.
+
+The first image where dark matter contamination excedes 1% of the virial mass, it is saved to a file in this format:
+darkmatter_contamination_aXXX_id_ZZZZZZZ, where XXX is the scale factor, and ZZZZZZ is the consistent trees halo id. The top row plots the stellar particles and the bottom row plots the higher mass dark matter particles so it can be seen where they have entered the halo. Here is an example for from GEN6 VELA07 at redshift 0.500.
+
+![Contamination image1](READMEfigures/darkmatter_contanimation_a500_id937383.png)
+
+The second image plotting the larger dark matter contamination is formateed as follows: darkmatter_contanimation_larger_particlesQQQ_aXXX_idZZZZZZ.png, where QQQ is the number of larger particles, XXX is the scale factor, and ZZZ is the halo id. Here is an example from GEN6 VELA09 scale factor of 0.460.
+
+![Contamination image2](READMEfigures/darkmatter_contanimation_larger_particles936_a460_id643890.png)
 
 ### Gas Abundance and Metallicity
 
