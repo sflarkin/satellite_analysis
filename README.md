@@ -2,10 +2,13 @@
 
 Developed by Sean Larkin
 
-This is the VELAHalos, a collection of pipeline and analysis scripts for studying galaxies in the Generation 3 and Generation 6 VELA simulations, run by Daniel Ceverino. These scripts were designed to be used via terminal on the NAS pleiades and NERSC Edison supercomputers. 
+This is the VELAHalos, a collection of pipeline and analysis scripts for studying galaxies in the Generation 3 and Generation 6 VELA simulations, run by Daniel Ceverino. These scripts were designed to be used via terminal on the NAS pleiades and NERSC Edison supercomputers. While designed for VELA, and ART simulation, these scripts should work with any simulation format readable with the python yt extention, although some names of fields may need to be changed.
 
 # TO DO
 -Update the GEN3snaps.py file to be more customizable on call with terminal?
+-fix the o2 percent in gas_abundance.py
+-graphs
+-NERSC pipeline script
 
 ## Table of Contents
 
@@ -30,6 +33,19 @@ consistent_dir: The location where the consistent trees hlist output files are. 
 out_dir: The location where you want the outputs (images, rockstar catalogs, etc.) placed.
 
 VELA_number: The number of the VELA simulation you are working with currently. For example, 07 for VELA07, or 14 for VELA14.
+
+## Pipeline Scripts
+
+If you would like to run any of these scripts on the VELA simulations, or on another yt compatibale simulation, I have included example bash scripts for the NASA Plieades and NERSC Cori supercomputers. 
+
+### Dependencies
+
+To run this pipeline, you will need these python packages:
+
+yt
+astropy
+pandas (for the tomer catalogs)
+numpy and matplotlib (these are dependancies for yt so you wont need to worry about them if you use anaconda)
 
 ## Running Rockstar 
 
@@ -57,13 +73,6 @@ To do this, the script [arttoascii.py](VELAscripts/arttoascii.py) was used. To c
 ```
 
 I often used the VELA_dir as the out_dir to keep the simulation files together, but if space is a concern, they can be kept seperate for easy management.
-
-### Getting the Stellar Mass and Gas Data
-
-After rockstar is run, the stellarmassrelation.py script can be run on the consistent trees data to extract the stellar mass and gas mass for each of the galaxies found. This script find the stellar mass within 3 multiples of the Virial Radius, .1, .15, .2 and 1.0 of the RVir. It also finds the gas within 1 Rvir. The process for finding the gas mass is very time intensive, due to yt needing to deconstruct the oc-tree of the VELA sims, so while other radii can be looked into, I have not yet done such analysis. 
-
-This script is an early draft used for some prelimary investigations, but is not the most accurate for the VELA simulations. I reccomend using the post processing scripts included here.
-
 
 ## Catalog Readers
 
@@ -154,18 +163,70 @@ The second image plotting the larger dark matter contamination is formateed as f
 
 ![Contamination image2](READMEfigures/darkmatter_contanimation_larger_particles936_a460_id643890.png)
 
+To run this script, you need the location of the consistent-trees hlists, the loaction of the VELA simulation files, and the location of the outputs from the above propermvircalc script, with the following command.
+
+```
+/path/to/satellite_analysis/VELAscripts/SFRandcontamination.py VELA_dir consistent_dir propermvircalc_dir out_dir
+```
+
 ### Gas Abundance and Metallicity
 
-This script calculates the metallicity and metallicity profile for each halo. Need to clean this one up as some of the fields are wrong.
+This script calculates the amount of hydrogen and oxygen in each halo for comparing with mass-metallicity relations. The hydrogen is taken to be 75% of the mass of the total gas mass, and the oxygen is 50% of the Type 2 Supernovae ejections. It also calculates the Type 1a supernovae ejections as well. These masses are calculated at 2%, 4%, 6%, 8%, 10%, 15%, and 20% of the proper rvir to allow for the metallicity gradient to be calculated. 
+
+To run this script, just like the SFRandcontimantion sctipt above, you need the location of the consistent-trees hlists, the loaction of the VELA simulation files, and the location of the outputs from the above propermvircalc script, with the following command.
+
+```
+/path/to/satellite_analysis/VELAscripts/gas_abundance.py VELA_dir propermvircalc_dir consistent_dir out_dir
+```
+
+### Log Spaced Profiles
+
+While the propermvircalc script generated profiles of each halo, those profiles were spaced linearlly. As many papers use log-spaced profiles, this scirpt creates a profile of 30 evenly log-spaced spheres out the proper rvir and calculates the mass of stars, dark matter, and gas within each.
+
+To run this, you once again need location of the consistent-trees hlists, the loaction of the VELA simulation files, and the location of the outputs from the above propermvircalc script, with the following command.
+
+```
+/path/to/satellite_analysis/VELAscripts/logprofiles.py VELA_dir propermvircalc_dir consistent_dir out_dir
+```
 
 ## SQL Database Creation
 
 For several of my post processing scripts, I use a SQL database 
 
-## Consistent Scripts 
+## Rockstar and Consistent Scripts 
 
-If you do not have access or interest in creating a SQL database for this data, there are a number of scripts that work from the .ascii outputs of the consistent trees and post processing scripts. These are earlier versions of scripts found in the SQL section, so they may not have the full functionality of them, but they preform mostly the same processes.
+If you do not have access or interest in creating a SQL database for this data, there are a number of scripts that work from the .ascii outputs of the rockstar or consistent trees catalogs. These are earlier versions of scripts found in the rockstar post processing and SQL section, so they may not have the full functionality of them, but they preform mostly the same processes.
 
+### Rockstar Scripts
+
+stellarmassrealtion.py: This calculates the mass of the stars, gas, and dark matter within 1 rvir based on the rockstar catalogs dark matter only calculation of rvir.
+
+massdistancecomparison.py: This plots the distribution of satellites as a function of distance from the central galaxy they are a satellite of.
+
+catalogprojections.py: This creates images of each high resolution region for each VELA timestep, and overplots the locations and virial radii of the rockstar catalog so the sizes of the galaxies can be seen. Good tool to see if rockstar is missing any obvious halos.
+
+halorvirdensityprojections.py: This creates images of the largest object in each timestep out to 1 rockstar rvir, and compares the rockstar rvir to those found in the Tomer catalogs.
+
+### Consistent Scripts
+
+stellarmassrelation.py: After rockstar is run, the stellarmassrelation.py script can be run on the consistent trees data to extract the stellar mass and gas mass for each of the galaxies found. This script find the stellar mass within 3 multiples of the Virial Radius, .1, .15, .2 and 1.0 of the RVir. It also finds the gas within 1 Rvir. The process for finding the gas mass is very time intensive, due to yt needing to deconstruct the oc-tree of the VELA sims, so while other radii can be looked into, I have not yet done such analysis. 
+
+This script is an early draft used for some prelimary investigations, but is not the most accurate for the VELA simulations. I reccomend using the post processing scripts included above.
+
+
+
+
+## Other Directories
+
+Here I will give a quick description of what the other directies do.
+
+### Mass Reations
+
+This includes several stellar halo mass relations (SHMR) from papers that are used in other plots to compare the VELA simulations to.
+
+### graphs
+
+This folder is where some of the scripts that have graphing functions point to for their graph scripts. This should probably be deleted and the scripts moved into the actual scripts.
 
 
 ## Accessing my Rockstar Runs on Pleiades
