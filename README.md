@@ -42,10 +42,10 @@ If you would like to run any of these scripts on the VELA simulations, or on ano
 
 To run this pipeline, you will need these python packages:
 
-yt
-astropy
-pandas (for the tomer catalogs)
-numpy and matplotlib (these are dependancies for yt so you wont need to worry about them if you use anaconda)
+- yt
+- astropy
+- pandas (for the tomer catalogs)
+- numpy and matplotlib (these are dependancies for yt so you wont need to worry about them if you use anaconda)
 
 ## Running Rockstar 
 
@@ -145,10 +145,10 @@ To run this script, you need the location of the consistent-trees hlists, and th
 ### SFR and Contamination
 
 Another important property to understanding halo evolution is the Star Formation Rate (SFR). The script here takes the proper rvir values from the previous script, and calculates the SFR and SSFR for several stellar populations and radii. All populations are calculated for those populations withing 10%, 15%, and 20% of the virial radius. The stellar populations considered are as follows:
--The Stars Formed since the last timestep
--The Stars Formed withing the last 2, 3, 4, and 5 timesteps
--The stars formed within 60 and 100 Myr
--The stars formed 5, 60, and 100 Myr according to the formula from Tacchella et al. 2016
+- The Stars Formed since the last timestep
+- The Stars Formed withing the last 2, 3, 4, and 5 timesteps
+- The stars formed within 60 and 100 Myr
+- The stars formed 5, 60, and 100 Myr according to the formula from Tacchella et al. 2016
 
 In addition to the SFRs, this script also sees if any of the higher mass dark matter particles from the less resolved outer regions of the ART code have contaminated any of the halos. This is used primarily as an exclusion paramater for those halos with high contamination (mass of contaminating particles reaching 10% of the total Virial Mass). 
 
@@ -199,22 +199,19 @@ If you do not have access or interest in creating a SQL database for this data, 
 
 ### Rockstar Scripts
 
-stellarmassrealtion.py: This calculates the mass of the stars, gas, and dark matter within 1 rvir based on the rockstar catalogs dark matter only calculation of rvir.
-
-massdistancecomparison.py: This plots the distribution of satellites as a function of distance from the central galaxy they are a satellite of.
-
-catalogprojections.py: This creates images of each high resolution region for each VELA timestep, and overplots the locations and virial radii of the rockstar catalog so the sizes of the galaxies can be seen. Good tool to see if rockstar is missing any obvious halos.
-
-halorvirdensityprojections.py: This creates images of the largest object in each timestep out to 1 rockstar rvir, and compares the rockstar rvir to those found in the Tomer catalogs.
+- stellarmassrealtion.py: This calculates the mass of the stars, gas, and dark matter within 1 rvir based on the rockstar catalogs dark matter only calculation of rvir.
+- massdistancecomparison.py: This plots the distribution of satellites as a function of distance from the central galaxy they are a satellite of.
+- catalogprojections.py: This creates images of each high resolution region for each VELA timestep, and overplots the locations and virial radii of the rockstar catalog so the sizes of the galaxies can be seen. Good tool to see if rockstar is missing any obvious halos.
+- halorvirdensityprojections.py: This creates images of the largest object in each timestep out to 1 rockstar rvir, and compares the rockstar rvir to those found in the Tomer catalogs.
 
 ### Consistent Scripts
 
-stellarmassrelation.py: After rockstar is run, the stellarmassrelation.py script can be run on the consistent trees data to extract the stellar mass and gas mass for each of the galaxies found. This script find the stellar mass within 3 multiples of the Virial Radius, .1, .15, .2 and 1.0 of the RVir. It also finds the gas within 1 Rvir. The process for finding the gas mass is very time intensive, due to yt needing to deconstruct the oc-tree of the VELA sims, so while other radii can be looked into, I have not yet done such analysis. 
+- stellarmassrelation.py: After rockstar is run, the stellarmassrelation.py script can be run on the consistent trees data to extract the stellar mass and gas mass for each of the galaxies found. This script find the stellar mass within 3 multiples of the Virial Radius, .1, .15, .2 and 1.0 of the RVir. It also finds the gas within 1 Rvir. The process for finding the gas mass is very time intensive, due to yt needing to deconstruct the oc-tree of the VELA sims, so while other radii can be looked into, I have not yet done such analysis. This script is an early draft used for some prelimary investigations, but is not the most accurate for the VELA simulations. I reccomend using the post processing scripts included above.
+- Planes of Sattelites.ipynb: This jupyter notebook file takes and finds the planes of satellites around objects.
+- catalogprojections.py: This creates images of each high resolution region for each VELA timestep, and overplots the locations and virial radii of the rockstar catalog so the sizes of the galaxies can be seen. Good tool to see if rockstar is missing any obvious halos.
+- 5 color particle plots.ipynb: This jupyter notebook makes plots of all 5 sizes of dark matter particles in the VELA simulations, and plots them.
 
-This script is an early draft used for some prelimary investigations, but is not the most accurate for the VELA simulations. I reccomend using the post processing scripts included above.
-
-
-
+There are a lot of other misc files here, if you have any questions about them feel free to reach out to me, as there are some prelim things that I never fully investigated, but the start is there.
 
 ## Other Directories
 
