@@ -27,6 +27,10 @@ This is the VELAHalos, a collection of pipeline and analysis scripts for studyin
     - NERSC Cori
 
 4. [SQL Scripts](#SQL-Scripts)
+    - [Rockstar](#Rockstar)
+    - [Propermvircalc, SFRandcontamination, and Gas Abundance](#Propermvircalc,-SFRandcontamination,-and-Gas-Abundance)
+    - [Merged Catalogs](#Merger-Catalogs)
+    - [Paper Image Scripts](#Paper-Image-Scripts)
 
 5. [Other Useful or Older Scripts](#Other-Useful-or-Older-Scripts)
     - [Rockstar and Consistent Catalog Readers](#Rockstar-and-Consistent-Catalog-Readers)
@@ -169,13 +173,28 @@ If you would like to run any of these scripts on the VELA simulations, or on ano
 ## NERSC Cori
 
 
-# SQL Scripts
+# SQL Database Scripts
+To make retrieving specific data easier for more complex calculations and plots, I created a sql database. If you want to create a copy of my database, I created a series of python scripts to allow for the automatic creation and checking of each sql table, and one that creates a main table joined for each individual galaxy in my rockstar post processing outputs. This mergedcatalog also creates an index of halo projenitors, allowing you to track halo evolution without having to refer back to the concurrent trees outputs. In the next subsection, I outline each script in my database generator, and in the one that follows, I include scripts for generating the plots and other useful information from the database.
 
-For several of my post processing scripts, I use a SQL database 
+There are two sets of scripts, one for GEN3 and one for GEN6. I separated them to prevent accidental adding of one generations halos to the other.
 
-## Database Creation and Management
+## Rockstar
+
+This creates a catalog for the entire consistent trees output files. This is the largest table by far, and it not required if space is an issue. You can also use this script to extract just the information of the merger trees for the halos that we post processed, and create a merger tree table here, which will also work for the merged catalog script.
+
+## Propermvircalc, SFRandcontamination, and Gas Abundance
+
+These scripts convert the outpus files of the listed python scripts to sql databases. 
+
+## Merged Catalogs
+
+This is the main sql script that makes life much easier. This process does two main things, first it joins all the databases so that the information of all extracted values for each halo can be called from one database. It also, it also creates a new column called projenitor_number from the merger information from the rockstar table or from the merger information table. The projenitor number is an integer that indicates which halos from each VELA sumulation are of the same branch of the merger tree, allowing easy tracking of each halo through its evolution. The halos with projenitor_number of 1 are the main central halo of which the simulation is centered. Then, each lower central halo is given a successive projenitor_number based on how many timesteps it exists for.
 
 ## Paper Image Scripts
+
+This section includes the python and sql processes for generating the images used in my paper. As my paper is not yet complete, this section is currently empty, as I am still finalazing them. Here is a quick sneak peak of what is to come.
+
+![Paper Image 1](READMEfigures/GEN6_SSFR_dexcalculation.jpg)
 
 # Other Useful or Older Scripts
 
